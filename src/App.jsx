@@ -1,4 +1,5 @@
 import { useAppStore } from './store/useAppStore';
+import { renderEmptyStateSection } from './components/ui/EmptyStateSection';
 
 export default function App() {
   const {
@@ -108,119 +109,51 @@ export default function App() {
 
           <div className="flex-1 px-5 py-6 sm:px-8 sm:py-8">
             {activeView === 'dashboard' ? (
-              renderDashboardPage(selectedMonth.label)
+              renderEmptyStateSection({
+                eyebrow: 'Dashboard page',
+                title: 'No monthly insights yet',
+                description: `The dashboard will eventually summarize ${selectedMonth.label} with calm, glanceable context. For now it stays empty and non-judgmental.`,
+                cards: [
+                  {
+                    title: 'Monthly snapshot',
+                    description: 'A quiet summary of the month will appear here once journal data exists.',
+                  },
+                  {
+                    title: 'Trend view',
+                    description: 'This space will surface simple directional context instead of dense reporting.',
+                  },
+                  {
+                    title: 'Reflection cues',
+                    description: 'Short prompts and gentle reminders can live here without overwhelming the page.',
+                  },
+                ],
+                gridClassName: 'lg:grid-cols-3',
+              })
             ) : (
-              renderJournalPage(selectedMonth.label)
+              renderEmptyStateSection({
+                eyebrow: 'Journal page',
+                title: 'No journal entries yet',
+                description: `The journal will eventually hold notes for ${selectedMonth.label}. For now it is only a quiet page shell.`,
+                cards: [
+                  {
+                    title: 'Daily note area',
+                    description: 'A small writing surface will appear here once monthly journaling begins.',
+                  },
+                  {
+                    title: 'Recent entries',
+                    description: 'This panel will later list entries in a calm, scannable way.',
+                  },
+                  {
+                    title: 'Writing prompts',
+                    description: 'Gentle questions can support reflection without turning the app into a form.',
+                  },
+                ],
+                gridClassName: 'md:grid-cols-2 xl:grid-cols-3',
+              })
             )}
           </div>
         </div>
       </section>
     </main>
-  );
-}
-
-function renderDashboardPage(selectedMonthLabel) {
-  const dashboardCards = [
-    {
-      title: 'Monthly snapshot',
-      description: 'A quiet summary of the month will appear here once journal data exists.',
-    },
-    {
-      title: 'Trend view',
-      description: 'This space will surface simple directional context instead of dense reporting.',
-    },
-    {
-      title: 'Reflection cues',
-      description: 'Short prompts and gentle reminders can live here without overwhelming the page.',
-    },
-  ];
-
-  return (
-    <section className="space-y-5">
-      <div className="rounded-[1.75rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] px-6 py-7 sm:px-8 sm:py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--text-muted)]">
-          Dashboard page
-        </p>
-        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[color:var(--text-primary)] sm:text-3xl">
-          No monthly insights yet
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-[color:var(--text-secondary)] sm:text-base">
-          The dashboard will eventually summarize {selectedMonthLabel} with calm, glanceable
-          context. For now it stays empty and non-judgmental.
-        </p>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        {dashboardCards.map((card) => (
-          <article
-            key={card.title}
-            className="rounded-[1.5rem] border border-dashed border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] px-5 py-6 sm:px-6 sm:py-7"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)]">
-              Empty state
-            </p>
-            <h3 className="mt-3 text-lg font-semibold tracking-tight text-[color:var(--text-primary)]">
-              {card.title}
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-[color:var(--text-secondary)]">
-              {card.description}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function renderJournalPage(selectedMonthLabel) {
-  const journalCards = [
-    {
-      title: 'Daily note area',
-      description: 'A small writing surface will appear here once monthly journaling begins.',
-    },
-    {
-      title: 'Recent entries',
-      description: 'This panel will later list entries in a calm, scannable way.',
-    },
-    {
-      title: 'Writing prompts',
-      description: 'Gentle questions can support reflection without turning the app into a form.',
-    },
-  ];
-
-  return (
-    <section className="space-y-5">
-      <div className="rounded-[1.75rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] px-6 py-7 sm:px-8 sm:py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--text-muted)]">
-          Journal page
-        </p>
-        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[color:var(--text-primary)] sm:text-3xl">
-          No journal entries yet
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-[color:var(--text-secondary)] sm:text-base">
-          The journal will eventually hold notes for {selectedMonthLabel}. For now it is only a
-          quiet page shell.
-        </p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {journalCards.map((card) => (
-          <article
-            key={card.title}
-            className="rounded-[1.5rem] border border-dashed border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] px-5 py-6 sm:px-6 sm:py-7"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)]">
-              Empty state
-            </p>
-            <h3 className="mt-3 text-lg font-semibold tracking-tight text-[color:var(--text-primary)]">
-              {card.title}
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-[color:var(--text-secondary)]">
-              {card.description}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
   );
 }
