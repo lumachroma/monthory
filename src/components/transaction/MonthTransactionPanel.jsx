@@ -1,8 +1,8 @@
 import { createElement, useEffect, useMemo, useState } from 'react';
 
-import { monthIncomeApplication } from '../../application/index.js';
+import { monthTransactionApplication } from '../../application/index.js';
 import { getTodayDateInputValue } from '../../lib/format.js';
-import { IncomePanelView } from './IncomePanelView.js';
+import { TransactionPanelView } from './TransactionPanelView.js';
 
 function createEmptyFormValues(referenceDate = new Date()) {
   return {
@@ -12,7 +12,7 @@ function createEmptyFormValues(referenceDate = new Date()) {
   };
 }
 
-function getFriendlyIncomeError(error) {
+function getFriendlyTransactionError(error) {
   const message = error instanceof Error ? error.message : String(error ?? '');
 
   if (/greater than zero/i.test(message)) {
@@ -31,17 +31,17 @@ function getFriendlyIncomeError(error) {
     return 'The selected month is invalid.';
   }
 
-  return 'Something went wrong with your income entry. Please try again.';
+  return 'Something went wrong with your spending entry. Please try again.';
 }
 
-export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
-  const [incomeState, setIncomeState] = useState({ month: null, incomes: [], totalIncome: 0 });
+export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged }) {
+  const [transactionState, setTransactionState] = useState({ month: null, transactions: [], totalSpending: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [isMutating, setIsMutating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formMode, setFormMode] = useState('add');
-  const [editingIncomeId, setEditingIncomeId] = useState(null);
+  const [editingTransactionId, setEditingTransactionId] = useState(null);
   const [formValues, setFormValues] = useState(createEmptyFormValues());
 
   const panelMonthLabel = useMemo(() => monthLabel, [monthLabel]);
@@ -49,28 +49,28 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
   useEffect(() => {
     let active = true;
 
-    async function loadIncome() {
+    async function loadTransactions() {
       setIsLoading(true);
       setErrorMessage('');
 
       try {
-        const loadedIncomeState = await monthIncomeApplication.listIncomeForMonth(monthId);
+        const loadedTransactionState = await monthTransactionApplication.listTransactionsForMonth(monthId);
 
         if (!active) {
           return;
         }
 
-        setIncomeState(loadedIncomeState);
+        setTransactionState(loadedTransactionState);
         setIsFormOpen(false);
         setFormMode('add');
-        setEditingIncomeId(null);
+        setEditingTransactionId(null);
         setFormValues(createEmptyFormValues());
       } catch {
         if (!active) {
           return;
         }
 
-        setErrorMessage('Something went wrong opening this month’s income. Please try again.');
+        setErrorMessage('Something went wrong opening this month’s spending. Please try again.');
       } finally {
         if (active) {
           setIsLoading(false);
@@ -78,37 +78,37 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
       }
     }
 
-    loadIncome();
+    loadTransactions();
 
     return () => {
       active = false;
     };
   }, [monthId]);
 
-  function openAddIncomeForm() {
+  function openAddTransactionForm() {
     setErrorMessage('');
     setIsFormOpen(true);
     setFormMode('add');
-    setEditingIncomeId(null);
+    setEditingTransactionId(null);
     setFormValues(createEmptyFormValues());
   }
 
-  function openEditIncomeForm(income) {
+  function openEditTransactionForm(transaction) {
     setErrorMessage('');
     setIsFormOpen(true);
     setFormMode('edit');
-    setEditingIncomeId(income.id);
+    setEditingTransactionId(transaction.id);
     setFormValues({
-      description: income.description,
-      amount: String(income.amount),
-      date: income.date,
+      description: transaction.description,
+      amount: String(transaction.amount),
+      date: transaction.date,
     });
   }
 
-  function closeIncomeForm() {
+  function closeTransactionForm() {
     setIsFormOpen(false);
     setFormMode('add');
-    setEditingIncomeId(null);
+    setEditingTransactionId(null);
     setFormValues(createEmptyFormValues());
     setErrorMessage('');
   }
@@ -120,9 +120,9 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
     }));
   }
 
-  async function reloadIncomeState() {
-    const loadedIncomeState = await monthIncomeApplication.listIncomeForMonth(monthId);
-    setIncomeState(loadedIncomeState);
+  async function reloadTransactionState() {
+    const loadedTransactionState = await monthTransactionApplication.listTransactionsForMonth(monthId);
+    setTransactionState(loadedTransactionState);
   }
 
   async function handleSubmit(event) {
@@ -131,8 +131,8 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
     setErrorMessage('');
 
     try {
-      const nextIncome = {
-        ...(formMode === 'edit' ? { id: editingIncomeId } : {}),
+      const nextTransaction = {
+        ...(formMode === 'edit' ? { id: editingTransactionId } : {}),
         monthId,
         description: formValues.description,
         amount: Number(formValues.amount),
@@ -140,25 +140,25 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
       };
 
       if (formMode === 'edit') {
-        await monthIncomeApplication.updateIncome(nextIncome);
+        await monthTransactionApplication.updateTransaction(nextTransaction);
       } else {
-        await monthIncomeApplication.createIncome(nextIncome);
+        await monthTransactionApplication.createTransaction(nextTransaction);
       }
 
-      await reloadIncomeState();
+      await reloadTransactionState();
       if (typeof onRecordsChanged === 'function') {
         await onRecordsChanged();
       }
-      closeIncomeForm();
+      closeTransactionForm();
     } catch (error) {
-      setErrorMessage(getFriendlyIncomeError(error));
+      setErrorMessage(getFriendlyTransactionError(error));
     } finally {
       setIsMutating(false);
     }
   }
 
-  async function handleDeleteIncome(income) {
-    if (!window.confirm(`Delete income entry “${income.description}”?`)) {
+  async function handleDeleteTransaction(transaction) {
+    if (!window.confirm(`Delete spending entry “${transaction.description}”?`)) {
       return;
     }
 
@@ -166,40 +166,38 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
     setErrorMessage('');
 
     try {
-      await monthIncomeApplication.deleteIncome(income.id);
+      await monthTransactionApplication.deleteTransaction(transaction.id);
 
-      if (editingIncomeId === income.id) {
-        closeIncomeForm();
+      if (editingTransactionId === transaction.id) {
+        closeTransactionForm();
       }
 
-      await reloadIncomeState();
+      await reloadTransactionState();
       if (typeof onRecordsChanged === 'function') {
         await onRecordsChanged();
       }
     } catch {
-      setErrorMessage('Something went wrong deleting this income entry. Please try again.');
+      setErrorMessage('Something went wrong deleting this spending entry. Please try again.');
     } finally {
       setIsMutating(false);
     }
   }
 
-  return (
-    createElement(IncomePanelView, {
-      monthLabel: panelMonthLabel,
-      incomes: incomeState.incomes,
-      totalIncome: incomeState.totalIncome,
-      isLoading,
-      errorMessage,
-      isFormOpen,
-      formMode,
-      formValues,
-      isMutating,
-      onOpenAdd: openAddIncomeForm,
-      onEditIncome: openEditIncomeForm,
-      onDeleteIncome: handleDeleteIncome,
-      onSubmit: handleSubmit,
-      onCancel: closeIncomeForm,
-      onFieldChange: updateFormField,
-    })
-  );
+  return createElement(TransactionPanelView, {
+    monthLabel: panelMonthLabel,
+    transactions: transactionState.transactions,
+    totalSpending: transactionState.totalSpending,
+    isLoading,
+    errorMessage,
+    isFormOpen,
+    formMode,
+    formValues,
+    isMutating,
+    onOpenAdd: openAddTransactionForm,
+    onEditTransaction: openEditTransactionForm,
+    onDeleteTransaction: handleDeleteTransaction,
+    onSubmit: handleSubmit,
+    onCancel: closeTransactionForm,
+    onFieldChange: updateFormField,
+  });
 }

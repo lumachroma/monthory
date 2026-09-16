@@ -1,10 +1,17 @@
-import { createElement, useEffect, useMemo, useState } from 'react';
+import { createElement, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { monthJournalApplication } from './application/index.js';
+import {
+  monthIncomeApplication,
+  monthJournalApplication,
+  monthOverviewApplication,
+  monthTransactionApplication,
+} from './application/index.js';
 import { useAppStore } from './store/useAppStore';
+import { calculateMonthlySummary } from './domain/index.js';
 import { renderEmptyStateSection } from './components/ui/EmptyStateSection';
 import { MonthJournalEditor } from './components/journal/MonthJournalEditor';
 import { MonthIncomePanel } from './components/income/MonthIncomePanel.jsx';
+import { MonthTransactionPanel } from './components/transaction/MonthTransactionPanel.jsx';
 
 export default function App() {
   const {
@@ -20,11 +27,31 @@ export default function App() {
   const [isLoadingJournal, setIsLoadingJournal] = useState(true);
   const [isSavingJournal, setIsSavingJournal] = useState(false);
   const [journalError, setJournalError] = useState('');
+  const [incomeState, setIncomeState] = useState({ incomes: [], totalIncome: 0 });
+  const [transactionState, setTransactionState] = useState({ transactions: [], totalSpending: 0 });
+  const [isLoadingFinancialOverview, setIsLoadingFinancialOverview] = useState(true);
+  const [financialOverviewError, setFinancialOverviewError] = useState('');
 
   const selectedMonthLabel = useMemo(
     () => monthJournalApplication.formatMonthLabel(selectedMonthId),
     [selectedMonthId],
   );
+
+  const monthlyFinancialSummary = useMemo(
+    () => calculateMonthlySummary({ incomes: incomeState.incomes, transactions: transactionState.transactions }),
+    [incomeState.incomes, transactionState.transactions],
+  );
+
+  const refreshFinancialOverview = useCallback(async () => {
+    const [loadedIncomeState, loadedTransactionState, loadedSummary] = await Promise.all([
+      monthIncomeApplication.listIncomeForMonth(selectedMonthId),
+      monthTransactionApplication.listTransactionsForMonth(selectedMonthId),
+      monthOverviewApplication.getMonthlyFinancialSummary(selectedMonthId),
+    ]);
+
+    setIncomeState({ incomes: loadedIncomeState.incomes, totalIncome: loadedSummary.totalIncome });
+    setTransactionState({ transactions: loadedTransactionState.transactions, totalSpending: loadedSummary.totalSpending });
+  }, [selectedMonthId]);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +88,39 @@ export default function App() {
       active = false;
     };
   }, [selectedMonthId]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadFinancialOverview() {
+      setIsLoadingFinancialOverview(true);
+      setFinancialOverviewError('');
+
+      try {
+        await refreshFinancialOverview();
+
+        if (!active) {
+          return;
+        }
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setFinancialOverviewError('Something went wrong opening your month overview. Please try again.');
+      } finally {
+        if (active) {
+          setIsLoadingFinancialOverview(false);
+        }
+      }
+    }
+
+    loadFinancialOverview();
+
+    return () => {
+      active = false;
+    };
+  }, [refreshFinancialOverview]);
 
   async function handleJournalSave(event) {
     event.preventDefault();
@@ -109,7 +169,7 @@ export default function App() {
                       : 'text-[color:var(--text-secondary)]'
                   }`}
                 >
-                  Income
+                  Overview
                 </button>
                 <button
                   type="button"
@@ -157,7 +217,56 @@ export default function App() {
 
           <div className="flex-1 px-4 py-5 sm:px-8 sm:py-8">
             {activeView === 'dashboard' ? (
-              createElement(MonthIncomePanel, { monthId: selectedMonthId, monthLabel: selectedMonthLabel })
+              <div className="space-y-5">
+                <section className="rounded-[1.75rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] px-5 py-5 sm:px-6 sm:py-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--text-muted)]">Monthly picture</p>
+                  <h2 className="mt-2 text-xl font-semibold tracking-tight text-[color:var(--text-primary)] sm:text-2xl">
+                    {selectedMonthLabel}
+                  </h2>
+
+                  {financialOverviewError ? (
+                    <div className="mt-4 rounded-[1.25rem] border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">
+                      {financialOverviewError}
+                    </div>
+                  ) : null}
+
+                  {isLoadingFinancialOverview ? (
+                    <p className="mt-4 text-sm leading-6 text-[color:var(--text-secondary)]">Loading summary…</p>
+                  ) : (
+                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                      <div className="rounded-[1.25rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)]">Income</p>
+                        <p className="mt-2 text-xl font-semibold tracking-tight text-[color:var(--text-primary)]">
+                          RM {monthlyFinancialSummary.totalIncome.toLocaleString('en-MY')}
+                        </p>
+                      </div>
+                      <div className="rounded-[1.25rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)]">Spending</p>
+                        <p className="mt-2 text-xl font-semibold tracking-tight text-[color:var(--text-primary)]">
+                          RM {monthlyFinancialSummary.totalSpending.toLocaleString('en-MY')}
+                        </p>
+                      </div>
+                      <div className="rounded-[1.25rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)]">Difference</p>
+                        <p className="mt-2 text-xl font-semibold tracking-tight text-[color:var(--text-primary)]">
+                          RM {monthlyFinancialSummary.netAmount.toLocaleString('en-MY')}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </section>
+
+                {createElement(MonthIncomePanel, {
+                  monthId: selectedMonthId,
+                  monthLabel: selectedMonthLabel,
+                  onRecordsChanged: refreshFinancialOverview,
+                })}
+                {createElement(MonthTransactionPanel, {
+                  monthId: selectedMonthId,
+                  monthLabel: selectedMonthLabel,
+                  onRecordsChanged: refreshFinancialOverview,
+                })}
+              </div>
             ) : (
               renderEmptyStateSection({
                 eyebrow: 'Journal page',
