@@ -6,7 +6,7 @@ Build the smallest useful financial journal first.
 
 Do not build future complexity before the core journaling habit is proven.
 
-Current status: the app shell, standalone domain v0.1 layer, local persistence v0.1 layer, and the first monthly journal user flow are in place. Cloud sync is not yet implemented.
+Current status: the app shell, standalone domain v0.1 layer, local persistence v0.1 layer, the first monthly journal user flow, and the first financial record flow for income are in place. Cloud sync is not yet implemented.
 
 ## Completed foundation
 
@@ -25,6 +25,9 @@ Current status: the app shell, standalone domain v0.1 layer, local persistence v
 - monthly journal application layer
 - journal editor for the current month
 - journal save and reload flow
+- monthly income application layer
+- income editor, list, delete flow, and monthly total
+- income persistence and month isolation
 
 ## Release 1 — Foundation
 
@@ -51,7 +54,7 @@ Goal: make monthly financial journaling simple and dependable.
 - stable month IDs
 
 ### Experience
-- dashboard
+- income list and total
 - monthly navigation
 - journal page shell
 - current-month journal editing

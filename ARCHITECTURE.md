@@ -20,11 +20,12 @@ The initial application has no required backend, API, authentication service, or
 Current milestone state:
 
 - application shell is implemented
-- dashboard and journal navigation are in place
+- income and journal navigation are in place
 - shell UI state is handled in Zustand
 - financial domain v0.1 lives in `src/domain`
 - local persistence v0.1 lives in `src/persistence/dexie`
 - repository contracts live in `src/repositories`
+- monthly journal and monthly income application layers live in `src/application`
 
 ## High-level architecture
 
@@ -91,7 +92,7 @@ The UI must not directly manipulate IndexedDB.
 Responsible for presentation, user interaction, accessibility, and responsive behaviour.
 
 ### Features
-Contains domain-specific workflows such as dashboard, journal, transactions, accounts, categories, templates, income, and settings.
+Contains domain-specific workflows such as income, journal, transactions, accounts, categories, templates, and settings.
 
 ### Business logic
 Calculates derived values and coordinates domain operations. Business logic should be testable without rendering React.

@@ -92,6 +92,8 @@ Rules:
 
 Money coming into the user's financial life.
 
+This is the first financial record surfaced in the app.
+
 Example:
 
 ```json

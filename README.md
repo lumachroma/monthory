@@ -35,20 +35,23 @@ If not, leave it out.
 Monthory currently includes:
 
 - an application shell with Monthory identity
-- dashboard and journal navigation
+- income and journal navigation
 - a month selector
 - a monthly journal use-case layer
 - a journal editor for the current month
 - month loading and save persistence for the journal flow
+- a monthly income use-case layer
+- an income list, editor, delete flow, and monthly total
+- local persistence for income by month
 - mobile-first empty states
 - calm design tokens for the shell
 - shell UI state in Zustand
 - a standalone financial domain layer in `src/domain`
 - a local persistence layer in `src/persistence/dexie`
 - repository contracts in `src/repositories`
-- domain and persistence tests in `tests/domain` and `tests/persistence`
+- domain, application, UI, and persistence tests in `tests/domain`, `tests/application`, `tests/ui`, and `tests/persistence`
 
-The app does not yet include transaction, income, transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
+The app does not yet include transaction, transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
 
 ## Technical direction
 
