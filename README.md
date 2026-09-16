@@ -65,6 +65,16 @@ Monthory is an offline-first PWA built with Vite + React + Vanilla JavaScript (n
 
 Current repo conventions also include a domain layer in `src/domain`, a persistence layer in `src/persistence/dexie`, repository contracts in `src/repositories`, and Node-based tests under `tests`.
 
+## Deployment
+
+Monthory is configured for GitHub Pages as a project site.
+
+- Workflow: [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml)
+- Published URL: `https://lumachroma.github.io/monthory/`
+- GitHub Pages base path: `/monthory/`
+
+When `GITHUB_PAGES=true`, the Vite build switches the app base path, asset URLs, and PWA manifest scope/start URL to `/monthory/`.
+
 See:
 
 - [PRODUCT.md](PRODUCT.md)

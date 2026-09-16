@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Monthory maskable PWA icon">
+  <rect width="128" height="128" rx="32" fill="#f4efe8" />
+  <rect x="24" y="24" width="80" height="80" rx="20" fill="#fffaf5" />
+  <rect x="32" y="32" width="64" height="64" rx="16" fill="#f4efe8" stroke="#8a5b3f" stroke-width="4" />
+  <path d="M44 50h40v6H44zm0 14h40v6H44zm0 14h24v6H44z" fill="#2b2a28" fill-opacity="0.88" />
+  <circle cx="82" cy="82" r="9" fill="#8a5b3f" />
+</svg>

@@ -33,6 +33,7 @@ Current implementation state:
 - derived monthly financial overview exists
 - starter categories are seeded idempotently and categories can be created, renamed, archived, and selected by ID
 - category management is now reachable through a secondary Settings entry point in the shell
+- GitHub Pages deployment uses the `/monthory/` base path when `GITHUB_PAGES=true`
 - shell UI state lives in Zustand
 - domain v0.1 lives in `src/domain`
 - local persistence v0.1 lives in `src/persistence/dexie`

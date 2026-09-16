@@ -36,6 +36,7 @@ Current status: the app shell, standalone domain v0.1 layer, local persistence v
 - starter categories and category archive/rename flow
 - reusable category selector foundation
 - secondary Settings entry point for Categories
+- GitHub Pages deployment and PWA hosting
 
 ## Release 1 — Foundation
 
@@ -73,6 +74,7 @@ Goal: make monthly financial journaling simple and dependable.
 ### Storage
 - Dexie and IndexedDB
 - offline-first PWA foundation already exists
+- GitHub Pages hosting for the published app
 - JSON import/export later
 
 ### Quality

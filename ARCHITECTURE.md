@@ -87,7 +87,8 @@ The UI must not directly manipulate IndexedDB.
 - React Testing Library
 
 ### Hosting
-- Cloudflare Pages or GitHub Pages
+- GitHub Pages for the published project site
+- static hosting at `/monthory/` when building for deployment
 
 ## Layer responsibilities
 
@@ -207,6 +208,10 @@ This avoids duplicating names and makes future reporting easier.
 
 Categories are global and archived categories remain part of historical lookups.
 The current entry point for category management is a secondary Settings screen, not the primary month workflow.
+
+## Deployment
+
+GitHub Pages builds must use the repo base path so the app shell and PWA manifest resolve correctly when published as a project site.
 
 ## PWA
 
