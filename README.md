@@ -75,7 +75,7 @@ Monthory is configured for GitHub Pages as a project site.
 
 When `GITHUB_PAGES=true`, the Vite build switches the app base path, asset URLs, and PWA manifest scope/start URL to `/monthory/`.
 
-If the repository is not already enabled for Pages, add a `PAGES_CONFIGURE_TOKEN` secret with repo-admin or Pages write permission so `actions/configure-pages` can enable Pages during the workflow run.
+Before the first deployment, enable GitHub Pages in the repository settings and choose GitHub Actions as the publishing source. The workflow can publish after that, but it cannot turn Pages on without extra repository-admin permissions.
 
 See:
 
