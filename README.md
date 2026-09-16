@@ -1,139 +1,43 @@
 # Monthory
 
-Monthory is a calm, private financial journal.
+**Your financial journal.**
 
-It is not an accounting system, budgeting app, or expense tracker.
+Monthory is a calm, private place to journal your financial life. It isn’t built to judge your spending or push complicated budgets. It helps you capture what happened, reflect on where your money went, and understand your financial story—one month at a time.
 
-The app is designed to help people build a sustainable monthly journaling habit around their financial life.
+## Philosophy
 
-There is no backend, no auth, no cloud dependency, and no financial data model in place yet.
+> Observe first. Improve second.
 
-## Current App
+Monthory makes financial awareness a sustainable monthly habit.
 
-Monthory is currently an empty web app shell.
+- Journal first
+- Sustainable by design
+- Progress over perfection
+- Private by default
+- Intentionally simple
+- One month at a time
 
-• Vite + React 19 application scaffold
-• Tailwind CSS v4 UI foundation
-• Zustand state store initialized for future app state
-• PWA manifest and service worker support wired in
-• No features, no repository layer, and no IndexedDB persistence yet
+## North Star
 
-## What Gets Tracked
+> Awareness over anxiety.  
+> Sustainability over intensity.
 
-Nothing yet.
+## Product test
 
-Monthory is still at the foundation stage, so no journal entries, categories, accounts, templates, or month data are stored.
+Before adding a feature:
 
-## Interaction Model
+> Does this make financial journaling more sustainable?
 
-The current app has no user-facing workflow yet.
+If not, leave it out.
 
-The intended experience will remain calm, minimal, and notebook-like as the app grows.
+## Technical direction
 
-## Tech Stack
+Monthory is an offline-first PWA built with Vite + React + Vanilla JavaScript (no TypeScript), shadcn/ui, Zustand, Dexie/IndexedDB, and Zod. It is designed for static hosting at near-zero cost.
 
-• React 19
-• Vite
-• JavaScript
-• Tailwind CSS v4
-• Zustand
-• lucide-react
-• vite-plugin-pwa
+See:
 
-## Architecture Notes
-
-Monthory is planned as a layered app.
-
-UI
-
-↓
-
-Business Logic
-
-↓
-
-Repository
-
-↓
-
-Dexie
-
-↓
-
-IndexedDB
-
-The current scaffold only initializes the UI and state layers. Persistence and domain logic will be added later, one stage at a time.
-
-## Development
-
-Prerequisites:
-
-• Node.js 20+
-• npm 10+
-
-Install dependencies:
-
-  npm install
-
-Start the dev server:
-
-  npm run dev
-
-Useful scripts:
-
-• npm run build
-• npm run preview
-• npm run lint
-
-## Deployment
-
-Deployment has not been set up yet.
-
-The app is prepared as a web PWA, so the next deployment stage can target a static host such as Cloudflare Pages or GitHub Pages.
-
-## Project Structure
-
-```text
-src/
-  app/
-  assets/
-  components/
-  features/
-    dashboard/
-    journal/
-    income/
-    transactions/
-    templates/
-    categories/
-    accounts/
-    settings/
-  hooks/
-  repository/
-  services/
-  store/
-  types/
-  utils/
-```
-
-Current scaffold files:
-
-```text
-src/
-  App.jsx
-  index.css
-  main.jsx
-  lib/
-    utils.js
-  store/
-    useAppStore.js
-```
-
-## Future Direction
-
-The next stages will add the app shell, repository layer, and offline-first persistence.
-
-Planned areas include monthly journals, recurring templates, categories, accounts, and reflection-focused views.
-
-## License
-
-This project has not been assigned a license yet.
+- [PRODUCT.md](PRODUCT.md)
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [DATA_MODEL.md](DATA_MODEL.md)
+- [ROADMAP.md](ROADMAP.md)
+- [copilot-instructions.md](copilot-instructions.md)
