@@ -1,5 +1,7 @@
 # Monthory
 
+[![Deploy GitHub Pages](https://github.com/lumachroma/monthory/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/lumachroma/monthory/actions/workflows/deploy-pages.yml)
+
 **Your financial journal.**
 
 Monthory is a calm, private place to journal your financial life. It is not built to judge spending or push complicated budgets. It helps you capture what happened, reflect on where your money went, and understand your financial story one month at a time.
