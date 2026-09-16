@@ -109,6 +109,16 @@ test('creates a valid category', () => {
   });
 });
 
+test('trims category names', () => {
+  const category = createCategory({ name: '  Transport  ' });
+
+  assert.equal(category.name, 'Transport');
+});
+
+test('rejects category names that are too long', () => {
+  assert.throws(() => createCategory({ name: 'a'.repeat(61) }), /60 characters or fewer/i);
+});
+
 test('rejects category with an empty name', () => {
   assert.throws(() => createCategory({ name: '   ' }), /non-empty string/i);
 });

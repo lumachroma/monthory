@@ -5,10 +5,26 @@ import {
   normalizeOptionalString,
 } from './validation.js';
 
+const MAX_CATEGORY_NAME_LENGTH = 60;
+
+export function normalizeCategoryName(value) {
+  const name = assertNonEmptyString(value, 'category name');
+
+  if (name.length > MAX_CATEGORY_NAME_LENGTH) {
+    throw new Error(`Category name must be ${MAX_CATEGORY_NAME_LENGTH} characters or fewer.`);
+  }
+
+  return name;
+}
+
+export function normalizeCategoryNameKey(value) {
+  return normalizeCategoryName(value).toLowerCase();
+}
+
 export function createCategory(input = {}) {
   assertPlainObject(input, 'category');
 
-  const name = assertNonEmptyString(input.name, 'category name');
+  const name = normalizeCategoryName(input.name);
   const icon = normalizeOptionalString(input.icon, 'category icon');
 
   return {

@@ -38,6 +38,18 @@ function sortByDateThenId(records) {
   });
 }
 
+function sortByNameThenId(records) {
+  return [...records].sort((left, right) => {
+    const nameComparison = String(left.name).localeCompare(String(right.name));
+
+    if (nameComparison !== 0) {
+      return nameComparison;
+    }
+
+    return String(left.id).localeCompare(String(right.id));
+  });
+}
+
 async function runPersistenceOperation(operation, handler) {
   try {
     return await handler();
@@ -148,6 +160,54 @@ function createMonthRepository(table) {
   };
 }
 
+function createCategoryRepository(table) {
+  return {
+    async getById(id) {
+      return runPersistenceOperation('category.getById', async () => table.get(ensureId(id, 'category id')));
+    },
+
+    async listAll() {
+      return runPersistenceOperation('category.listAll', async () => sortByNameThenId(await table.toArray()));
+    },
+
+    async listActive() {
+      return runPersistenceOperation('category.listActive', async () =>
+        sortByNameThenId((await table.toArray()).filter((category) => !category.archived)),
+      );
+    },
+
+    async create(category) {
+      return runPersistenceOperation('category.create', async () => {
+        await table.put(category);
+        return category;
+      });
+    },
+
+    async update(category) {
+      return runPersistenceOperation('category.update', async () => {
+        await table.put(category);
+        return category;
+      });
+    },
+
+    async archive(id) {
+      return runPersistenceOperation('category.archive', async () => {
+        const recordId = ensureId(id, 'category id');
+        const category = await getRequiredRecord(table, recordId, 'Category');
+        const archivedCategory = { ...category, archived: true };
+
+        await table.put(archivedCategory);
+
+        return archivedCategory;
+      });
+    },
+
+    async save(category) {
+      return this.create(category);
+    },
+  };
+}
+
 export function createDexieFinanceRepository(database = createMonthoryDatabase()) {
   const monthsTable = database.table('months');
   const journalsTable = database.table('journals');
@@ -191,7 +251,7 @@ export function createDexieFinanceRepository(database = createMonthoryDatabase()
         });
       },
     },
-    categories: createIdRepository(categoriesTable, 'category'),
+      categories: createCategoryRepository(categoriesTable),
     accounts: createIdRepository(accountsTable, 'account'),
     templates: createIdRepository(templatesTable, 'template'),
     async reset() {

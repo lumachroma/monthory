@@ -12,14 +12,18 @@ import { renderEmptyStateSection } from './components/ui/EmptyStateSection';
 import { MonthJournalEditor } from './components/journal/MonthJournalEditor';
 import { MonthIncomePanel } from './components/income/MonthIncomePanel.jsx';
 import { MonthTransactionPanel } from './components/transaction/MonthTransactionPanel.jsx';
+import { SettingsPanel } from './components/settings/SettingsPanel.jsx';
 
 export default function App() {
   const {
     activeView,
+    goBackFromSettings,
     goToNextMonth,
     goToPreviousMonth,
     selectedMonthId,
+    openSettings,
     setActiveView,
+    previousPrimaryView,
   } = useAppStore();
 
   const [journalState, setJournalState] = useState({ month: null, journal: null });
@@ -163,6 +167,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setActiveView('dashboard')}
+                  aria-pressed={activeView === 'dashboard'}
                   className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
                     activeView === 'dashboard'
                       ? 'bg-[color:var(--surface)] text-[color:var(--text-primary)] shadow-sm'
@@ -174,6 +179,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setActiveView('journal')}
+                  aria-pressed={activeView === 'journal'}
                   className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
                     activeView === 'journal'
                       ? 'bg-[color:var(--surface)] text-[color:var(--text-primary)] shadow-sm'
@@ -181,6 +187,20 @@ export default function App() {
                   }`}
                 >
                   Journal
+                </button>
+
+                <button
+                  type="button"
+                  onClick={openSettings}
+                  aria-label="Open settings"
+                  aria-pressed={activeView === 'settings'}
+                  className={`col-span-2 inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--border-subtle)] px-4 py-2 text-sm font-medium transition hover:bg-[color:var(--surface)] sm:col-span-1 ${
+                    activeView === 'settings'
+                      ? 'bg-[color:var(--surface)] text-[color:var(--text-primary)] shadow-sm'
+                      : 'bg-transparent text-[color:var(--text-secondary)]'
+                  }`}
+                >
+                  Settings
                 </button>
               </div>
             </div>
@@ -267,7 +287,7 @@ export default function App() {
                   onRecordsChanged: refreshFinancialOverview,
                 })}
               </div>
-            ) : (
+            ) : activeView === 'journal' ? (
               renderEmptyStateSection({
                 eyebrow: 'Journal page',
                 title: journalState.journal ? 'Edit your journal' : 'Nothing here yet',
@@ -281,6 +301,11 @@ export default function App() {
                   },
                 ],
                 gridClassName: 'grid-cols-1',
+              })
+            ) : (
+              createElement(SettingsPanel, {
+                backLabel: previousPrimaryView === 'journal' ? 'Back to journal' : 'Back to overview',
+                onBack: goBackFromSettings,
               })
             )}
 
