@@ -6,45 +6,59 @@ Build the smallest useful financial journal first.
 
 Do not build future complexity before the core journaling habit is proven.
 
+Current status: the app shell and the standalone domain v0.1 layer are in place. Persistence is not yet implemented.
+
+## Completed foundation
+
+- application shell
+- Monthory identity
+- dashboard and journal navigation
+- month selector
+- mobile-first empty states
+- calm design tokens
+- Zustand shell UI state
+- financial domain factories, validators, and summary logic
+- domain-level tests
+
 ## Release 1 — Foundation
 
 Goal: make monthly financial journaling simple and dependable.
 
 ### Data
-- settings
-- income sources
 - categories
 - accounts
 - recurring templates
-- years and months
-- income entries
+- months
+- journal
+- reflection
+- income
 - transactions
+- transfers
 
 ### Journal
 - monthly journal
-- income entry
-- spending entry
-- category totals
-- account totals
-- remaining income
+- reflection
+
+### Domain
+- validation helpers
+- derived monthly summary
+- stable month IDs
 
 ### Experience
 - dashboard
 - monthly navigation
-- simple transaction entry
-- recurring transaction generation
+- journal page shell
 - mobile-first responsive UI
 
 ### Storage
-- Dexie
-- IndexedDB
-- offline-first PWA
-- JSON import/export
+- Dexie and IndexedDB later
+- offline-first PWA foundation already exists
+- JSON import/export later
 
 ### Quality
 - Vanilla JavaScript (no TypeScript)
-- Zod validation
-- unit tests for core calculations
+- domain validation
+- domain-level tests
 - accessibility baseline
 
 ## Release 2 — Better journaling

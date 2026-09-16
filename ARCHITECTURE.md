@@ -17,12 +17,22 @@ Offline-first Progressive Web App.
 
 The initial application has no required backend, API, authentication service, or hosted database.
 
+Current milestone state:
+
+- application shell is implemented
+- dashboard and journal navigation are in place
+- shell UI state is handled in Zustand
+- financial domain v0.1 lives in `src/domain`
+- persistence is intentionally not implemented yet
+
 ## High-level architecture
 
 ```text
 React UI
    |
 Feature / Business Logic
+   |
+Domain
    |
 Finance Repository
    |
@@ -85,6 +95,9 @@ Contains domain-specific workflows such as dashboard, journal, transactions, acc
 ### Business logic
 Calculates derived values and coordinates domain operations. Business logic should be testable without rendering React.
 
+### Domain
+Contains framework-agnostic factories, validators, and derived calculations for Monthory financial concepts.
+
 ### Repository
 The single persistence boundary.
 
@@ -108,6 +121,8 @@ generateRecurringTransactions()
 Dexie owns IndexedDB access.
 
 No feature should depend on Dexie's schema directly.
+
+The repository layer is a future milestone and is not yet implemented in the current codebase.
 
 ## Repository abstraction
 
@@ -150,6 +165,8 @@ Do not persist:
 
 These should be derived from source data.
 
+Transfers are facts but should not affect income or spending totals.
+
 ## IDs
 
 Every persistent entity has a stable ID.
@@ -171,13 +188,15 @@ Master data:
 
 - categories
 - accounts
-- income sources
 - templates
 
 Monthly data:
 
-- income entries
+- journal
+- reflection
+- income
 - transactions
+- transfers
 
 This avoids duplicating names and makes future reporting easier.
 

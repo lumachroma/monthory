@@ -17,6 +17,15 @@ It is not primarily:
 
 Its purpose is to help users capture what happened, reflect on where their money went, and understand their financial story one month at a time.
 
+Current implementation state:
+
+- application shell with Monthory identity exists
+- dashboard and journal navigation exist
+- month selector and empty states exist
+- shell UI state lives in Zustand
+- domain v0.1 lives in `src/domain`
+- persistence is intentionally not implemented yet
+
 ## 2. Product philosophy
 
 > Observe first. Improve second.
@@ -97,15 +106,12 @@ Use the existing stack unless there is a compelling reason to change it:
 - Zustand
 - React Hook Form
 - Zod
-- Dexie
-- IndexedDB
-- Recharts
 - date-fns
 - vite-plugin-pwa
-- Vitest
-- React Testing Library
+- Node.js built-in test runner for domain tests
 - ESLint
-- Prettier
+
+Future additions may include React Hook Form, Dexie, IndexedDB, Recharts, Vitest, React Testing Library, and Prettier if the implementation needs them.
 
 Do not add dependencies casually.
 
@@ -118,6 +124,8 @@ UI
  |
 Feature / Business Logic
  |
+Domain
+ |
 Repository
  |
 Dexie
@@ -129,21 +137,23 @@ UI components must not directly access IndexedDB.
 
 Persistence must go through the repository boundary.
 
+Domain code must remain framework-agnostic and must not depend on React, Zustand, browser APIs, Dexie, or IndexedDB.
+
 ## 10. Data model
 
 The canonical model is:
 
 ```text
-FinanceData
-├── settings
-├── incomeSources
-├── categories
-├── accounts
-├── templates
-└── years
-    └── months
-        ├── income
-        └── transactions
+Month
+├── Journal
+├── Income[]
+├── Transaction[]
+├── Transfer[]
+├── Reflection
+└── Templates[]
+
+Category[]
+Account[]
 ```
 
 Read `DATA_MODEL.md` before changing the schema.
@@ -181,13 +191,17 @@ Master data:
 
 - categories
 - accounts
-- income sources
 - templates
 
 Monthly facts:
 
+- journal
+- reflection
 - income entries
 - transactions
+- transfers
+
+Transfers are facts but do not affect income or spending totals.
 
 ## 12. Templates
 
@@ -273,12 +287,12 @@ Avoid:
 
 ## 16. Forms and validation
 
-Use React Hook Form for non-trivial forms.
+Use React Hook Form for non-trivial forms when forms are introduced.
 
 Use Zod for:
 
 - imported JSON
-- persisted data validation
+- persisted data validation when persistence exists
 - important form validation
 - schema migrations
 
@@ -286,15 +300,17 @@ Never trust imported data blindly.
 
 ## 17. Storage
 
-Use Dexie/IndexedDB.
+Dexie/IndexedDB are future work.
 
-Do not replace IndexedDB with localStorage for primary financial data.
+Do not introduce persistence until the relevant milestone requires it.
+
+Do not replace future primary storage with localStorage.
 
 LocalStorage may only be used for genuinely tiny, non-critical UI preferences if necessary.
 
 ## 18. Import/export
 
-The canonical JSON model is the portable backup format.
+The canonical JSON model is the portable backup format when import/export is introduced.
 
 Import must:
 
@@ -302,9 +318,9 @@ Import must:
 2. validate with Zod
 3. check version
 4. migrate if necessary
-5. persist through the repository
+5. persist through the repository when that layer exists
 
-Export must produce valid canonical FinanceData.
+Export must produce valid canonical domain data.
 
 ## 19. Security and privacy
 
@@ -324,13 +340,14 @@ Exports should be treated as sensitive files.
 
 Prioritise tests for:
 
+- domain validation
 - totals
 - derived calculations
 - template generation
-- import/export
-- schema validation
-- migrations
-- repository behaviour
+- import/export when introduced
+- schema validation when persistence exists
+- migrations when persistence exists
+- repository behaviour when implemented
 
 UI tests should focus on important user workflows rather than implementation details.
 
@@ -366,7 +383,7 @@ Before coding:
 2. Understand the existing data model.
 3. Identify the smallest useful change.
 4. Check whether the feature supports the product philosophy.
-5. Consider data migration implications.
+5. Consider migration implications if persistence is involved.
 6. Plan tests.
 
 While coding:
@@ -379,7 +396,7 @@ While coding:
 
 After coding:
 
-1. Run type checks.
+1. Run the relevant tests.
 2. Run linting.
 3. Run tests.
 4. Verify responsive behaviour.
@@ -388,7 +405,7 @@ After coding:
 
 ## 24. Schema changes
 
-Never casually change persisted data structures.
+Never casually change persisted data structures when they exist.
 
 When changing the schema:
 
@@ -404,6 +421,8 @@ When changing the schema:
 Do not implement cloud sync in Release 1.
 
 Keep the repository abstraction capable of supporting a future cloud adapter.
+
+Do not couple the UI to Supabase.
 
 Do not couple the UI to Supabase.
 

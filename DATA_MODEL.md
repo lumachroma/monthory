@@ -2,297 +2,266 @@
 
 ## Purpose
 
-This document defines the canonical application data model.
+This document defines Monthory's current financial domain model.
 
-The JSON structure is designed to be portable across:
+The model is designed to stay framework-agnostic so it can later be mapped to persistence, export, or synchronization layers.
 
-- IndexedDB
-- local JSON export/import
-- future cloud storage
-- future relational databases
-
-## Top-level model
+## Domain overview
 
 ```text
-FinanceData
-├── version
-├── settings
-├── incomeSources
-├── categories
-├── accounts
-├── templates
-└── years
-    └── months
-        ├── income
-        └── transactions
+Month
+├── Journal
+├── Income[]
+├── Transaction[]
+├── Transfer[]
+├── Reflection
+└── Templates[]
+
+Category[]
+Account[]
 ```
 
-## Canonical JSON example
+## Domain entities
+
+### Month
+
+The central monthly container.
+
+Example:
 
 ```json
 {
-  "version": "1.0.0",
-  "settings": {
-    "currency": "MYR",
-    "locale": "en-MY",
-    "startOfWeek": "Monday"
-  },
-  "incomeSources": [
-    {
-      "id": "income-salary",
-      "name": "Salary",
-      "type": "fixed"
-    },
-    {
-      "id": "income-allowance",
-      "name": "Allowance",
-      "type": "variable"
-    },
-    {
-      "id": "income-bonus",
-      "name": "Bonus",
-      "type": "variable"
-    }
-  ],
-  "categories": [
-    {
-      "id": "cat-utilities",
-      "name": "Utilities",
-      "type": "living"
-    },
-    {
-      "id": "cat-groceries",
-      "name": "Groceries",
-      "type": "living"
-    },
-    {
-      "id": "cat-subscriptions",
-      "name": "Subscriptions",
-      "type": "lifestyle"
-    }
-  ],
-  "accounts": [
-    {
-      "id": "acc-maybank",
-      "name": "Maybank Visa",
-      "type": "bank"
-    },
-    {
-      "id": "acc-cimb",
-      "name": "CIMB Mastercard",
-      "type": "bank"
-    },
-    {
-      "id": "acc-cash",
-      "name": "Cash",
-      "type": "cash"
-    }
-  ],
-  "templates": [
-    {
-      "id": "tpl-electricity",
-      "categoryId": "cat-utilities",
-      "name": "Electricity",
-      "defaultAmount": null,
-      "recurring": true
-    },
-    {
-      "id": "tpl-internet",
-      "categoryId": "cat-utilities",
-      "name": "Internet",
-      "defaultAmount": 129,
-      "recurring": true
-    },
-    {
-      "id": "tpl-spotify",
-      "categoryId": "cat-subscriptions",
-      "name": "Spotify",
-      "defaultAmount": 16,
-      "recurring": true
-    }
-  ],
-  "years": [
-    {
-      "year": 2026,
-      "months": [
-        {
-          "id": "2026-01",
-          "income": [
-            {
-              "sourceId": "income-salary",
-              "amount": 8500
-            },
-            {
-              "sourceId": "income-allowance",
-              "amount": 500
-            }
-          ],
-          "transactions": [
-            {
-              "id": "tx-001",
-              "templateId": "tpl-internet",
-              "accountId": "acc-maybank",
-              "amount": 129
-            },
-            {
-              "id": "tx-002",
-              "templateId": "tpl-electricity",
-              "accountId": "acc-maybank",
-              "amount": 118
-            },
-            {
-              "id": "tx-003",
-              "categoryId": "cat-groceries",
-              "accountId": "acc-cash",
-              "name": "Lotus",
-              "amount": 420
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "id": "2026-09",
+  "year": 2026,
+  "month": 9
 }
 ```
 
-## Entity definitions
+Rules:
 
-### Settings
-Application preferences. Settings should not contain transactional facts.
+- `id` must use the `YYYY-MM` format.
+- `year` must be a four-digit integer.
+- `month` must be an integer from 1 to 12.
+- `id` must match the year and month values.
+- A month must not store derived totals.
 
-### Income sources
-Reusable definitions for where income comes from.
+### Journal
 
-Examples:
+Monthly notes written during the month.
 
-- Salary
-- Allowance
-- Bonus
+Example:
 
-### Categories
-Reusable definitions describing what money was used for.
+```json
+{
+  "monthId": "2026-09",
+  "notes": "September felt busy but manageable.",
+  "createdAt": "2026-09-30T10:15:00.000Z",
+  "updatedAt": "2026-09-30T10:15:00.000Z"
+}
+```
 
-Examples:
+Rules:
 
-- Utilities
-- Groceries
-- Education
-- Insurance
-- Dining
-- Travel
+- `monthId` references the associated Month.
+- `notes` is optional plain text.
+- Timestamps use ISO strings.
+- No rich-text formatting is introduced at this stage.
 
-### Accounts
-Reusable definitions describing how money was paid or where funds are held.
+### Reflection
 
-Examples:
+End-of-month notes separate from the journal narrative.
 
-- Maybank Visa
-- CIMB Mastercard
-- Cash
-- TNG eWallet
+Example:
 
-Accounts and categories are intentionally separate.
+```json
+{
+  "monthId": "2026-09",
+  "notes": "We spent more, but we also noticed why.",
+  "createdAt": "2026-09-30T18:00:00.000Z",
+  "updatedAt": "2026-09-30T18:00:00.000Z"
+}
+```
 
-### Templates
-Reusable definitions for recurring transactions.
+Rules:
 
-A template may contain a default amount, but a monthly transaction owns the actual amount for that month.
+- `monthId` references the associated Month.
+- `notes` is optional plain text.
+- Timestamps use ISO strings.
 
-Examples:
+### Income
 
-- Electricity
-- Internet
-- Spotify
-- Instalment ABC
+Money coming into the user's financial life.
 
-### Year
-Groups months by calendar year.
+Example:
 
-### Month
-Represents a monthly journal chapter.
+```json
+{
+  "id": "income-salary-001",
+  "monthId": "2026-09",
+  "date": "2026-09-05",
+  "description": "Salary",
+  "amount": 10000,
+  "accountId": "acc-maybank"
+}
+```
 
-A month contains:
+Rules:
 
-- income entries
-- transactions
+- `amount` must be positive.
+- `monthId` identifies the month.
+- `date` must be a valid `YYYY-MM-DD` date that belongs to the same month.
+- `description` must be non-empty.
+- `categoryId` is optional.
+- `accountId` is optional.
+- Income is never stored as a negative value.
 
-## Transaction rules
+### Transaction
 
-A transaction may reference:
+Money going out.
 
-- templateId, when created from a recurring template
-- categoryId, when categorised
-- accountId, when payment source is known
+Example:
 
-A manually created transaction does not need a template.
+```json
+{
+  "id": "tx-001",
+  "monthId": "2026-09",
+  "date": "2026-09-06",
+  "description": "Groceries",
+  "amount": 500,
+  "categoryId": "cat-groceries",
+  "accountId": "acc-cash"
+}
+```
 
-A template does not replace the monthly transaction. It defines a reusable pattern.
+Rules:
+
+- `amount` must be positive.
+- `monthId` identifies the month.
+- `date` must be a valid `YYYY-MM-DD` date that belongs to the same month.
+- `description` must be non-empty.
+- `categoryId` is optional.
+- `accountId` is optional.
+- Transactions are always outgoing facts.
+
+### Transfer
+
+Money moving between accounts.
+
+Example:
+
+```json
+{
+  "id": "tr-001",
+  "monthId": "2026-09",
+  "date": "2026-09-18",
+  "amount": 3000,
+  "fromAccountId": "acc-maybank",
+  "toAccountId": "acc-cimb",
+  "description": "Move savings"
+}
+```
+
+Rules:
+
+- `amount` must be positive.
+- `fromAccountId` and `toAccountId` are required.
+- Source and destination accounts must differ.
+- Transfers do not affect income or spending totals.
+
+### Category
+
+Reusable context for financial records.
+
+Example:
+
+```json
+{
+  "id": "cat-groceries",
+  "name": "Groceries",
+  "icon": "shopping-basket",
+  "archived": false
+}
+```
+
+Rules:
+
+- `id` must be stable.
+- `name` must be non-empty.
+- `icon` is optional and presentation-friendly.
+- `archived` is optional and defaults to `false`.
+
+### Account
+
+Where money is held or moved through.
+
+Example:
+
+```json
+{
+  "id": "acc-maybank",
+  "name": "Maybank",
+  "type": "bank",
+  "archived": false
+}
+```
+
+Rules:
+
+- `id` must be stable.
+- `name` must be non-empty.
+- `type` must be a non-empty, extensible string.
+- `archived` is optional and defaults to `false`.
+
+### Template
+
+Reusable pattern for creating future income or transaction records.
+
+Example:
+
+```json
+{
+  "id": "tpl-internet",
+  "type": "transaction",
+  "description": "Internet",
+  "amount": 129,
+  "categoryId": "cat-utilities",
+  "accountId": "acc-maybank",
+  "frequency": "monthly"
+}
+```
+
+Rules:
+
+- `type` must be `income` or `transaction`.
+- `description` must be non-empty.
+- `amount` must be positive.
+- `frequency` is intentionally simple for v0.1.
+- A template is not itself a financial record.
 
 ## Derived values
 
-Calculate, do not store:
+Calculate, do not store.
 
-```text
-Total Income
-Total Spending
-Remaining Income
-Category Totals
-Account Totals
-Savings Rate
-Yearly Totals
-Monthly Trends
-```
+At the domain level, the monthly summary currently exposes:
 
-## ID rules
+- `totalIncome`
+- `totalSpending`
+- `netAmount`
 
-IDs must be stable and unique.
+Transfers do not affect these totals.
 
-IDs must never depend on display names.
+## Validation
 
-Renaming:
+The domain layer validates:
 
-```text
-Utilities -> Household Utilities
-```
+- month id format and month parts
+- positive amounts
+- valid dates that belong to the month
+- required names and descriptions where needed
+- distinct transfer accounts
 
-must not require rewriting transactions.
+## Notes
 
-## Import/export
+This document describes the current domain layer, not a persistence schema.
 
-The JSON format is the portable backup format.
-
-Import flow:
-
-```text
-JSON file
-  |
-Parse
-  |
-Zod validation
-  |
-Migration/version check
-  |
-Repository
-  |
-IndexedDB
-```
-
-Export flow:
-
-```text
-IndexedDB
-  |
-Repository
-  |
-Canonical FinanceData
-  |
-JSON file
-```
-
-## Versioning
-
-The top-level `version` is mandatory.
-
-Schema changes must use migrations rather than silently changing existing data.
-
-Never break existing user data because of a new UI feature.
+Persistence mapping can be added later without changing the core domain concepts.

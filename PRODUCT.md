@@ -24,6 +24,12 @@ It helps you:
 - make deliberate adjustments
 - build a sustainable habit of financial awareness
 
+## Current implementation
+
+The current app includes the shell, Monthory identity, dashboard and journal navigation, a month selector, mobile-first empty states, and a standalone financial domain layer.
+
+It does not yet include persistence, authentication, cloud sync, or a financial entry UI.
+
 ## Mission
 
 > To make financial awareness a sustainable monthly habit.
@@ -50,10 +56,13 @@ The best financial system is the one a person will still use years from now. Red
 Life changes. Income changes. Spending changes. Monthory helps users understand the month they had, not judge it.
 
 ### Private by Default
-Financial data belongs to the user. The initial product is offline-first and stores data locally.
+Financial data belongs to the user. The initial product is offline-first.
 
 ### Intentionally Simple
 Every feature must earn its place. Prefer clarity over feature volume.
+
+### Domain First
+Keep the financial domain framework-agnostic and easy to test before any persistence layer is introduced.
 
 ### One Month at a Time
 A month is a chapter. A year is a collection of chapters.
