@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Monthory">
+  <rect width="128" height="128" rx="28" fill="#f4efe8" />
+  <path d="M30 40h68v8H30zm0 20h68v8H30zm0 20h46v8H30z" fill="#2b2a28" fill-opacity="0.9" />
+  <circle cx="92" cy="88" r="10" fill="#8c5a3c" />
+</svg>
