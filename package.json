@@ -8,12 +8,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "node --test tests/domain/*.test.js",
-    "test:watch": "node --test --watch tests/domain/*.test.js"
+    "test": "node --test tests/domain/*.test.js tests/persistence/dexie/*.test.js",
+    "test:watch": "node --test --watch tests/domain/*.test.js tests/persistence/dexie/*.test.js"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dexie": "^4.4.6",
+    "fake-indexeddb": "^6.2.5",
     "lucide-react": "^0.540.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
