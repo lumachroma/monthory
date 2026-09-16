@@ -26,9 +26,9 @@ It helps you:
 
 ## Current implementation
 
-The current app includes the shell, Monthory identity, dashboard and journal navigation, a month selector, mobile-first empty states, and a standalone financial domain layer.
+The current app includes the shell, Monthory identity, dashboard and journal navigation, a month selector, mobile-first empty states, a standalone financial domain layer, and a local Dexie/IndexedDB persistence layer.
 
-It does not yet include persistence, authentication, cloud sync, or a financial entry UI.
+It does not yet include authentication, cloud sync, or a financial entry UI.
 
 ## Mission
 
@@ -56,7 +56,7 @@ The best financial system is the one a person will still use years from now. Red
 Life changes. Income changes. Spending changes. Monthory helps users understand the month they had, not judge it.
 
 ### Private by Default
-Financial data belongs to the user. The initial product is offline-first.
+Financial data belongs to the user. The initial product is offline-first and stores data locally.
 
 ### Intentionally Simple
 Every feature must earn its place. Prefer clarity over feature volume.

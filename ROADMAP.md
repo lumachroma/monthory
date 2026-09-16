@@ -6,7 +6,7 @@ Build the smallest useful financial journal first.
 
 Do not build future complexity before the core journaling habit is proven.
 
-Current status: the app shell and the standalone domain v0.1 layer are in place. Persistence is not yet implemented.
+Current status: the app shell, standalone domain v0.1 layer, and local persistence v0.1 layer are in place. Cloud sync is not yet implemented.
 
 ## Completed foundation
 
@@ -18,6 +18,9 @@ Current status: the app shell and the standalone domain v0.1 layer are in place.
 - calm design tokens
 - Zustand shell UI state
 - financial domain factories, validators, and summary logic
+- Dexie local persistence layer
+- repository contracts
+- persistence tests
 - domain-level tests
 
 ## Release 1 — Foundation
@@ -51,7 +54,7 @@ Goal: make monthly financial journaling simple and dependable.
 - mobile-first responsive UI
 
 ### Storage
-- Dexie and IndexedDB later
+- Dexie and IndexedDB
 - offline-first PWA foundation already exists
 - JSON import/export later
 
@@ -59,6 +62,7 @@ Goal: make monthly financial journaling simple and dependable.
 - Vanilla JavaScript (no TypeScript)
 - domain validation
 - domain-level tests
+- repository tests
 - accessibility baseline
 
 ## Release 2 — Better journaling

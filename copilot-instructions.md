@@ -1,4 +1,4 @@
-# Monthory — AI Development Instructions
+# Monthory - AI Development Instructions
 
 ## 1. Project identity
 
@@ -24,7 +24,8 @@ Current implementation state:
 - month selector and empty states exist
 - shell UI state lives in Zustand
 - domain v0.1 lives in `src/domain`
-- persistence is intentionally not implemented yet
+- local persistence v0.1 lives in `src/persistence/dexie`
+- repository contracts live in `src/repositories`
 
 ## 2. Product philosophy
 
@@ -42,7 +43,7 @@ The product should help the user observe, reflect, and decide.
 
 ## 4. North Star
 
-> Awareness over anxiety.  
+> Awareness over anxiety.
 > Sustainability over intensity.
 
 ## 5. Product test
@@ -104,14 +105,15 @@ Use the existing stack unless there is a compelling reason to change it:
 - Tailwind CSS
 - Lucide React
 - Zustand
-- React Hook Form
+- Dexie
+- IndexedDB
 - Zod
 - date-fns
 - vite-plugin-pwa
-- Node.js built-in test runner for domain tests
+- Node.js built-in test runner
 - ESLint
 
-Future additions may include React Hook Form, Dexie, IndexedDB, Recharts, Vitest, React Testing Library, and Prettier if the implementation needs them.
+Future additions may include React Hook Form, Recharts, Vitest, React Testing Library, and Prettier if the implementation needs them.
 
 Do not add dependencies casually.
 
@@ -292,7 +294,7 @@ Use React Hook Form for non-trivial forms when forms are introduced.
 Use Zod for:
 
 - imported JSON
-- persisted data validation when persistence exists
+- persisted data validation
 - important form validation
 - schema migrations
 
@@ -300,17 +302,17 @@ Never trust imported data blindly.
 
 ## 17. Storage
 
-Dexie/IndexedDB are future work.
+Dexie and IndexedDB are the current local storage layer.
 
-Do not introduce persistence until the relevant milestone requires it.
+Do not bypass the repository boundary from UI or domain code.
 
-Do not replace future primary storage with localStorage.
+Do not replace primary storage with localStorage.
 
 LocalStorage may only be used for genuinely tiny, non-critical UI preferences if necessary.
 
 ## 18. Import/export
 
-The canonical JSON model is the portable backup format when import/export is introduced.
+The canonical JSON model is the portable backup format for local backup and restore.
 
 Import must:
 
@@ -318,7 +320,7 @@ Import must:
 2. validate with Zod
 3. check version
 4. migrate if necessary
-5. persist through the repository when that layer exists
+5. persist through the repository
 
 Export must produce valid canonical domain data.
 
@@ -344,10 +346,11 @@ Prioritise tests for:
 - totals
 - derived calculations
 - template generation
-- import/export when introduced
-- schema validation when persistence exists
-- migrations when persistence exists
-- repository behaviour when implemented
+- import/export
+- schema validation
+- repository behaviour
+- persistence round trips
+- month isolation
 
 UI tests should focus on important user workflows rather than implementation details.
 
@@ -401,7 +404,7 @@ After coding:
 3. Run tests.
 4. Verify responsive behaviour.
 5. Check accessibility.
-6. Verify import/export compatibility when data is affected.
+6. Verify persistence round trips and month isolation when data is affected.
 
 ## 24. Schema changes
 
@@ -421,8 +424,6 @@ When changing the schema:
 Do not implement cloud sync in Release 1.
 
 Keep the repository abstraction capable of supporting a future cloud adapter.
-
-Do not couple the UI to Supabase.
 
 Do not couple the UI to Supabase.
 

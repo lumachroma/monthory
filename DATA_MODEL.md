@@ -4,7 +4,7 @@
 
 This document defines Monthory's current financial domain model.
 
-The model is designed to stay framework-agnostic so it can later be mapped to persistence, export, or synchronization layers.
+The model is designed to stay framework-agnostic while being mapped by the repository and persistence layers.
 
 ## Domain overview
 

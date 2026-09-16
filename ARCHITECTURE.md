@@ -23,7 +23,8 @@ Current milestone state:
 - dashboard and journal navigation are in place
 - shell UI state is handled in Zustand
 - financial domain v0.1 lives in `src/domain`
-- persistence is intentionally not implemented yet
+- local persistence v0.1 lives in `src/persistence/dexie`
+- repository contracts live in `src/repositories`
 
 ## High-level architecture
 
@@ -118,11 +119,11 @@ generateRecurringTransactions()
 ```
 
 ### Storage
-Dexie owns IndexedDB access.
+Dexie owns IndexedDB access in the current milestone.
 
 No feature should depend on Dexie's schema directly.
 
-The repository layer is a future milestone and is not yet implemented in the current codebase.
+The repository layer is implemented in `src/repositories` and `src/persistence/dexie`.
 
 ## Repository abstraction
 

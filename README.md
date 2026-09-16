@@ -41,15 +41,17 @@ Monthory currently includes:
 - calm design tokens for the shell
 - shell UI state in Zustand
 - a standalone financial domain layer in `src/domain`
-- domain-level Node tests in `tests/domain`
+- a local persistence layer in `src/persistence/dexie`
+- repository contracts in `src/repositories`
+- domain and persistence tests in `tests/domain` and `tests/persistence`
 
-The app does not yet include Dexie, IndexedDB persistence, authentication, cloud sync, or a financial entry UI.
+The app does not yet include authentication, cloud sync, or a financial entry UI.
 
 ## Technical direction
 
-Monthory is an offline-first PWA built with Vite + React + Vanilla JavaScript (no TypeScript), shadcn/ui, Zustand, Zod, and a future Dexie/IndexedDB persistence layer. It is designed for static hosting at near-zero cost.
+Monthory is an offline-first PWA built with Vite + React + Vanilla JavaScript (no TypeScript), shadcn/ui, Zustand, Dexie, IndexedDB, and Zod. It is designed for static hosting at near-zero cost.
 
-Current repo conventions also include a domain layer in `src/domain` and Node-based domain tests under `tests/domain`.
+Current repo conventions also include a domain layer in `src/domain`, a persistence layer in `src/persistence/dexie`, repository contracts in `src/repositories`, and Node-based tests under `tests`.
 
 See:
 
