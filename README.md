@@ -46,6 +46,9 @@ Monthory currently includes:
 - a monthly transaction use-case layer
 - a spending list, editor, delete flow, and monthly total
 - a derived monthly financial overview with income, spending, and difference
+- a global category foundation with starter categories, archive, rename, and custom creation
+- a reusable category selector for future record forms
+- a secondary Settings entry point with nested Categories management
 - mobile-first empty states
 - calm design tokens for the shell
 - shell UI state in Zustand
@@ -54,7 +57,7 @@ Monthory currently includes:
 - repository contracts in `src/repositories`
 - domain, application, UI, and persistence tests in `tests/domain`, `tests/application`, `tests/ui`, and `tests/persistence`
 
-The app does not yet include transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
+The app does not yet include account or template UI. It also does not include authentication, cloud sync, or Supabase.
 
 ## Technical direction
 

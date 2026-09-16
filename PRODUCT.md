@@ -26,9 +26,9 @@ It helps you:
 
 ## Current implementation
 
-The current app includes the shell, Monthory identity, overview and journal navigation, a month selector, mobile-first empty states, a monthly journal application layer, a monthly income application layer, a monthly transaction application layer, a journal editor for the current month, income and spending lists/editors for the current month, a derived monthly financial overview, a standalone financial domain layer, and a local Dexie/IndexedDB persistence layer.
+The current app includes the shell, Monthory identity, overview and journal navigation, a month selector, mobile-first empty states, a monthly journal application layer, a monthly income application layer, a monthly transaction application layer, a global category foundation with starter categories, a reusable category selector foundation, a secondary Settings entry point for Categories, a journal editor for the current month, income and spending lists/editors for the current month, a derived monthly financial overview, a standalone financial domain layer, and a local Dexie/IndexedDB persistence layer.
 
-It does not yet include transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
+It does not yet include account or template UI. It also does not include authentication, cloud sync, or Supabase.
 
 ## Mission
 

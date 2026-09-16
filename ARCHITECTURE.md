@@ -27,6 +27,8 @@ Current milestone state:
 - repository contracts live in `src/repositories`
 - monthly journal and monthly income application layers live in `src/application`
 - monthly transaction and monthly overview application layers live in `src/application`
+- global category application layer lives in `src/application`
+- secondary settings navigation lives in the app shell state/UI
 
 ## High-level architecture
 
@@ -93,7 +95,7 @@ The UI must not directly manipulate IndexedDB.
 Responsible for presentation, user interaction, accessibility, and responsive behaviour.
 
 ### Features
-Contains domain-specific workflows such as overview, income, spending, journal, transactions, accounts, categories, templates, and settings.
+Contains domain-specific workflows such as overview, income, spending, journal, transactions, categories, accounts, templates, and settings.
 
 ### Business logic
 Calculates derived values and coordinates domain operations. Business logic should be testable without rendering React.
@@ -202,6 +204,9 @@ Monthly data:
 - transfers
 
 This avoids duplicating names and makes future reporting easier.
+
+Categories are global and archived categories remain part of historical lookups.
+The current entry point for category management is a secondary Settings screen, not the primary month workflow.
 
 ## PWA
 

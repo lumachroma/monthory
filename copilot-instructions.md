@@ -26,10 +26,13 @@ Current implementation state:
 - monthly income application layer exists
 - monthly transaction application layer exists
 - monthly overview application layer exists
+- global category application layer exists
 - current-month journal editor and save flow exist
 - current-month income list, editor, delete flow, and monthly total exist
 - current-month spending list, editor, delete flow, and monthly total exist
 - derived monthly financial overview exists
+- starter categories are seeded idempotently and categories can be created, renamed, archived, and selected by ID
+- category management is now reachable through a secondary Settings entry point in the shell
 - shell UI state lives in Zustand
 - domain v0.1 lives in `src/domain`
 - local persistence v0.1 lives in `src/persistence/dexie`

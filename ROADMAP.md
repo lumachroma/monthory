@@ -32,6 +32,10 @@ Current status: the app shell, standalone domain v0.1 layer, local persistence v
 - spending editor, list, delete flow, and monthly total
 - transaction persistence and month isolation
 - derived monthly financial overview
+- global category foundation
+- starter categories and category archive/rename flow
+- reusable category selector foundation
+- secondary Settings entry point for Categories
 
 ## Release 1 — Foundation
 
@@ -60,6 +64,7 @@ Goal: make monthly financial journaling simple and dependable.
 ### Experience
 - income and spending lists with totals
 - derived monthly financial overview
+- category management foundation in Settings
 - monthly navigation
 - journal page shell
 - current-month journal editing

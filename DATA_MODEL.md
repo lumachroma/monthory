@@ -176,6 +176,9 @@ Rules:
 
 Reusable context for financial records.
 
+Categories are global, not month-specific.
+Category management is reached from Settings; selection for a spending record will remain separate.
+
 Example:
 
 ```json
@@ -191,8 +194,10 @@ Rules:
 
 - `id` must be stable.
 - `name` must be non-empty.
+- `name` is trimmed and treated case-insensitively for duplicate detection.
 - `icon` is optional and presentation-friendly.
 - `archived` is optional and defaults to `false`.
+- Archived categories remain valid for historical records and are excluded from new-record selection.
 
 ### Account
 
