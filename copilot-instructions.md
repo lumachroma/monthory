@@ -22,6 +22,8 @@ Current implementation state:
 - application shell with Monthory identity exists
 - dashboard and journal navigation exist
 - month selector and empty states exist
+- monthly journal application layer exists
+- current-month journal editor and save flow exist
 - shell UI state lives in Zustand
 - domain v0.1 lives in `src/domain`
 - local persistence v0.1 lives in `src/persistence/dexie`
@@ -124,7 +126,7 @@ Use this flow:
 ```text
 UI
  |
-Feature / Business Logic
+Feature / Application
  |
 Domain
  |
@@ -136,6 +138,8 @@ IndexedDB
 ```
 
 UI components must not directly access IndexedDB.
+
+The current first real user flow is the monthly journal. Keep that flow simple: current month, month navigation, journal load, journal save, and persistence after reload.
 
 Persistence must go through the repository boundary.
 

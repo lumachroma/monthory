@@ -37,6 +37,9 @@ Monthory currently includes:
 - an application shell with Monthory identity
 - dashboard and journal navigation
 - a month selector
+- a monthly journal use-case layer
+- a journal editor for the current month
+- month loading and save persistence for the journal flow
 - mobile-first empty states
 - calm design tokens for the shell
 - shell UI state in Zustand
@@ -45,7 +48,7 @@ Monthory currently includes:
 - repository contracts in `src/repositories`
 - domain and persistence tests in `tests/domain` and `tests/persistence`
 
-The app does not yet include authentication, cloud sync, or a financial entry UI.
+The app does not yet include transaction, income, transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
 
 ## Technical direction
 

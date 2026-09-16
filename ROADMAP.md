@@ -6,7 +6,7 @@ Build the smallest useful financial journal first.
 
 Do not build future complexity before the core journaling habit is proven.
 
-Current status: the app shell, standalone domain v0.1 layer, and local persistence v0.1 layer are in place. Cloud sync is not yet implemented.
+Current status: the app shell, standalone domain v0.1 layer, local persistence v0.1 layer, and the first monthly journal user flow are in place. Cloud sync is not yet implemented.
 
 ## Completed foundation
 
@@ -22,6 +22,9 @@ Current status: the app shell, standalone domain v0.1 layer, and local persisten
 - repository contracts
 - persistence tests
 - domain-level tests
+- monthly journal application layer
+- journal editor for the current month
+- journal save and reload flow
 
 ## Release 1 — Foundation
 
@@ -51,6 +54,7 @@ Goal: make monthly financial journaling simple and dependable.
 - dashboard
 - monthly navigation
 - journal page shell
+- current-month journal editing
 - mobile-first responsive UI
 
 ### Storage
