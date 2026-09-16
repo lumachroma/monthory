@@ -32,6 +32,18 @@ test('creates a valid income record', () => {
   });
 });
 
+test('creates a valid income record without a category', () => {
+  const income = createIncome({
+    id: 'income-uncategorised',
+    monthId: '2026-09',
+    date: '2026-09-05',
+    description: 'Salary',
+    amount: 10000,
+  });
+
+  assert.equal(Object.prototype.hasOwnProperty.call(income, 'categoryId'), false);
+});
+
 test('rejects income with a non-positive amount', () => {
   assert.throws(() => createIncome({ monthId: '2026-09', date: '2026-09-05', description: 'Salary', amount: 0 }), /greater than zero/i);
 });
@@ -56,6 +68,18 @@ test('creates a valid outgoing transaction', () => {
     categoryId: 'cat-groceries',
     accountId: 'acc-cash',
   });
+});
+
+test('creates a valid outgoing transaction without a category', () => {
+  const transaction = createTransaction({
+    id: 'tx-uncategorised',
+    monthId: '2026-09',
+    date: '2026-09-06',
+    description: 'Groceries',
+    amount: 250,
+  });
+
+  assert.equal(Object.prototype.hasOwnProperty.call(transaction, 'categoryId'), false);
 });
 
 test('rejects transaction with a non-positive amount', () => {

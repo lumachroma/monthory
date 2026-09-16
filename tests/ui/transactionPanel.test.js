@@ -13,10 +13,11 @@ test('transaction empty state renders calmly', () => {
       transactions: [],
       totalSpending: 0,
       isLoading: false,
+      isLoadingCategories: false,
       errorMessage: '',
       isFormOpen: false,
       formMode: 'add',
-      formValues: { description: '', amount: '', date: '2026-09-16' },
+      formValues: { description: '', amount: '', date: '2026-09-16', categoryId: '' },
       isMutating: false,
       onOpenAdd: () => {},
       onEditTransaction: () => {},
@@ -24,6 +25,8 @@ test('transaction empty state renders calmly', () => {
       onSubmit: () => {},
       onCancel: () => {},
       onFieldChange: () => {},
+      activeCategories: [],
+      categoryById: {},
     }),
   );
 
@@ -37,15 +40,16 @@ test('transaction list renders entries and total', () => {
     React.createElement(TransactionPanelView, {
       monthLabel: 'September 2026',
       transactions: [
-        { id: 'tx-1', description: 'Groceries', date: '2026-09-05', amount: 180 },
+        { id: 'tx-1', description: 'Groceries', date: '2026-09-05', amount: 180, categoryId: 'cat_food' },
         { id: 'tx-2', description: 'Petrol', date: '2026-09-15', amount: 80 },
       ],
       totalSpending: 260,
       isLoading: false,
+      isLoadingCategories: false,
       errorMessage: '',
       isFormOpen: false,
       formMode: 'add',
-      formValues: { description: '', amount: '', date: '2026-09-16' },
+      formValues: { description: '', amount: '', date: '2026-09-16', categoryId: '' },
       isMutating: false,
       onOpenAdd: () => {},
       onEditTransaction: () => {},
@@ -53,6 +57,8 @@ test('transaction list renders entries and total', () => {
       onSubmit: () => {},
       onCancel: () => {},
       onFieldChange: () => {},
+      activeCategories: [{ id: 'cat_food', name: 'Food' }],
+      categoryById: { cat_food: { id: 'cat_food', name: 'Food' } },
     }),
   );
 
@@ -61,4 +67,5 @@ test('transaction list renders entries and total', () => {
   assert.match(markup, /RM\s?180/);
   assert.match(markup, /RM\s?80/);
   assert.match(markup, /RM\s?260/);
+  assert.match(markup, /Food/);
 });

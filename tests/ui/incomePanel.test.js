@@ -13,10 +13,11 @@ test('income empty state renders calmly', () => {
       incomes: [],
       totalIncome: 0,
       isLoading: false,
+      isLoadingCategories: false,
       errorMessage: '',
       isFormOpen: false,
       formMode: 'add',
-      formValues: { description: '', amount: '', date: '2026-09-16' },
+      formValues: { description: '', amount: '', date: '2026-09-16', categoryId: '' },
       isMutating: false,
       onOpenAdd: () => {},
       onEditIncome: () => {},
@@ -24,6 +25,8 @@ test('income empty state renders calmly', () => {
       onSubmit: () => {},
       onCancel: () => {},
       onFieldChange: () => {},
+      activeCategories: [],
+      categoryById: {},
     }),
   );
 
@@ -37,15 +40,16 @@ test('income list renders entries and total', () => {
     React.createElement(IncomePanelView, {
       monthLabel: 'September 2026',
       incomes: [
-        { id: 'income-1', description: 'Salary', date: '2026-09-05', amount: 12000 },
+        { id: 'income-1', description: 'Salary', date: '2026-09-05', amount: 12000, categoryId: 'cat_income' },
         { id: 'income-2', description: 'Freelance', date: '2026-09-15', amount: 800 },
       ],
       totalIncome: 12800,
       isLoading: false,
+      isLoadingCategories: false,
       errorMessage: '',
       isFormOpen: false,
       formMode: 'add',
-      formValues: { description: '', amount: '', date: '2026-09-16' },
+      formValues: { description: '', amount: '', date: '2026-09-16', categoryId: '' },
       isMutating: false,
       onOpenAdd: () => {},
       onEditIncome: () => {},
@@ -53,6 +57,8 @@ test('income list renders entries and total', () => {
       onSubmit: () => {},
       onCancel: () => {},
       onFieldChange: () => {},
+      activeCategories: [{ id: 'cat_income', name: 'Salary' }],
+      categoryById: { cat_income: { id: 'cat_income', name: 'Salary' } },
     }),
   );
 
@@ -61,4 +67,5 @@ test('income list renders entries and total', () => {
   assert.match(markup, /RM\s?12,000/);
   assert.match(markup, /RM\s?800/);
   assert.match(markup, /RM\s?12,800/);
+  assert.match(markup, /Salary/);
 });

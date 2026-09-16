@@ -1,6 +1,7 @@
 import { createElement } from 'react';
 
 import { formatCalendarDate, formatCurrencyAmount } from '../../lib/format.js';
+import { CategorySelector } from '../category/CategorySelector.js';
 
 const e = createElement;
 
@@ -20,6 +21,8 @@ export function IncomePanelView({
   onSubmit,
   onCancel,
   onFieldChange,
+  activeCategories,
+  categoryById,
 }) {
   if (isLoading) {
     return e(
@@ -80,7 +83,11 @@ export function IncomePanelView({
                   'div',
                   { className: 'min-w-0' },
                   e('h3', { className: 'truncate text-sm font-medium text-[color:var(--text-primary)] sm:text-base' }, income.description),
-                  e('p', { className: 'mt-1 text-xs text-[color:var(--text-muted)] sm:text-sm' }, formatCalendarDate(income.date)),
+                  e(
+                    'p',
+                    { className: 'mt-1 text-xs text-[color:var(--text-muted)] sm:text-sm' },
+                    `${formatCalendarDate(income.date)}${income.categoryId ? ` · ${categoryById[income.categoryId]?.name ?? 'Archived category'}` : ' · No category'}`,
+                  ),
                 ),
                 e(
                   'div',
@@ -160,6 +167,19 @@ export function IncomePanelView({
                 className: 'rounded-[1rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-3 text-base text-[color:var(--text-primary)] outline-none transition focus:border-[color:var(--accent)]',
               }),
             ),
+            e(CategorySelector, {
+              label: 'Category',
+              categories: activeCategories,
+              value: formValues.categoryId,
+              onChange: (nextCategoryId) => onFieldChange('categoryId', nextCategoryId),
+              allowNone: true,
+              noneLabel: 'No category',
+              id: 'income-category',
+              selectedCategoryLabel:
+                formValues.categoryId && categoryById[formValues.categoryId]
+                  ? `${categoryById[formValues.categoryId].name} (archived)`
+                  : '',
+            }),
             e(
               'div',
               { className: 'flex justify-end gap-3 pt-2' },

@@ -10,7 +10,10 @@ export function CategorySelector({
   allowNone = true,
   noneLabel = 'No category',
   id = 'category-selector',
+  selectedCategoryLabel = '',
 }) {
+  const hasSelectedArchivedCategory = Boolean(value) && !categories.some((category) => category.id === value);
+
   return e(
     'label',
     { className: 'grid gap-2 text-sm font-medium text-[color:var(--text-primary)]', htmlFor: id },
@@ -24,6 +27,7 @@ export function CategorySelector({
         className: 'rounded-[1rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-3 text-base text-[color:var(--text-primary)] outline-none transition focus:border-[color:var(--accent)]',
       },
       allowNone ? e('option', { value: '' }, noneLabel) : null,
+      hasSelectedArchivedCategory ? e('option', { value, disabled: true }, selectedCategoryLabel || 'Archived category') : null,
       ...categories.map((category) => e('option', { key: category.id, value: category.id }, category.name)),
     ),
   );

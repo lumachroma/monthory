@@ -72,6 +72,56 @@ test('createTransaction saves a month-scoped spending entry', async () => {
   assert.equal(repository.__transactions.get(transaction.id).description, 'Groceries');
 });
 
+test('createTransaction persists an optional category id', async () => {
+  const repository = createMemoryRepository();
+  const application = createMonthTransactionApplication(repository);
+
+  const transaction = await application.createTransaction({
+    monthId: '2026-09',
+    date: '2026-09-05',
+    description: 'Groceries',
+    amount: 180,
+    categoryId: 'cat-food',
+  });
+
+  assert.equal(transaction.categoryId, 'cat-food');
+  assert.equal(repository.__transactions.get(transaction.id).categoryId, 'cat-food');
+});
+
+test('updateTransaction can change or remove a category id', async () => {
+  const repository = createMemoryRepository();
+  const application = createMonthTransactionApplication(repository);
+
+  const transaction = await application.createTransaction({
+    monthId: '2026-09',
+    date: '2026-09-05',
+    description: 'Groceries',
+    amount: 180,
+    categoryId: 'cat-food',
+  });
+
+  const updatedTransaction = await application.updateTransaction({
+    id: transaction.id,
+    monthId: '2026-09',
+    date: '2026-09-06',
+    description: 'Groceries',
+    amount: 200,
+    categoryId: 'cat-home',
+  });
+
+  assert.equal(updatedTransaction.categoryId, 'cat-home');
+
+  const uncategorisedTransaction = await application.updateTransaction({
+    id: transaction.id,
+    monthId: '2026-09',
+    date: '2026-09-06',
+    description: 'Groceries',
+    amount: 200,
+  });
+
+  assert.equal(Object.prototype.hasOwnProperty.call(uncategorisedTransaction, 'categoryId'), false);
+});
+
 test('listTransactionsForMonth returns only the selected month', async () => {
   const repository = createMemoryRepository();
   const application = createMonthTransactionApplication(repository);

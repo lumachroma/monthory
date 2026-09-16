@@ -55,6 +55,56 @@ test('createIncome saves a month-scoped income entry', async () => {
   assert.equal(repository.__incomes.get(income.id).description, 'Salary');
 });
 
+test('createIncome persists an optional category id', async () => {
+  const repository = createMemoryRepository();
+  const application = createMonthIncomeApplication(repository);
+
+  const income = await application.createIncome({
+    monthId: '2026-09',
+    date: '2026-09-05',
+    description: 'Salary',
+    amount: 12000,
+    categoryId: 'cat-income',
+  });
+
+  assert.equal(income.categoryId, 'cat-income');
+  assert.equal(repository.__incomes.get(income.id).categoryId, 'cat-income');
+});
+
+test('updateIncome can change or remove a category id', async () => {
+  const repository = createMemoryRepository();
+  const application = createMonthIncomeApplication(repository);
+
+  const income = await application.createIncome({
+    monthId: '2026-09',
+    date: '2026-09-05',
+    description: 'Salary',
+    amount: 12000,
+    categoryId: 'cat-income',
+  });
+
+  const updatedIncome = await application.updateIncome({
+    id: income.id,
+    monthId: '2026-09',
+    date: '2026-09-06',
+    description: 'Salary',
+    amount: 12500,
+    categoryId: 'cat-bonus',
+  });
+
+  assert.equal(updatedIncome.categoryId, 'cat-bonus');
+
+  const uncategorisedIncome = await application.updateIncome({
+    id: income.id,
+    monthId: '2026-09',
+    date: '2026-09-06',
+    description: 'Salary',
+    amount: 12500,
+  });
+
+  assert.equal(Object.prototype.hasOwnProperty.call(uncategorisedIncome, 'categoryId'), false);
+});
+
 test('listIncomeForMonth returns only the selected month', async () => {
   const repository = createMemoryRepository();
   const application = createMonthIncomeApplication(repository);

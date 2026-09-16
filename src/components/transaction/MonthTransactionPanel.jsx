@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useState } from 'react';
 
-import { monthTransactionApplication } from '../../application/index.js';
+import { categoryApplication, monthTransactionApplication } from '../../application/index.js';
 import { getTodayDateInputValue } from '../../lib/format.js';
 import { TransactionPanelView } from './TransactionPanelView.js';
 
@@ -9,6 +9,7 @@ function createEmptyFormValues(referenceDate = new Date()) {
     description: '',
     amount: '',
     date: getTodayDateInputValue(referenceDate),
+    categoryId: '',
   };
 }
 
@@ -36,7 +37,9 @@ function getFriendlyTransactionError(error) {
 
 export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged }) {
   const [transactionState, setTransactionState] = useState({ month: null, transactions: [], totalSpending: 0 });
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isMutating, setIsMutating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -45,6 +48,8 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
   const [formValues, setFormValues] = useState(createEmptyFormValues());
 
   const panelMonthLabel = useMemo(() => monthLabel, [monthLabel]);
+  const activeCategories = useMemo(() => categories.filter((category) => !category.archived), [categories]);
+  const categoryById = useMemo(() => Object.fromEntries(categories.map((category) => [category.id, category])), [categories]);
 
   useEffect(() => {
     let active = true;
@@ -85,6 +90,34 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
     };
   }, [monthId]);
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadCategories() {
+      setIsLoadingCategories(true);
+
+      try {
+        const loadedCategories = await categoryApplication.listCategories();
+
+        if (!active) {
+          return;
+        }
+
+        setCategories(loadedCategories);
+      } finally {
+        if (active) {
+          setIsLoadingCategories(false);
+        }
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   function openAddTransactionForm() {
     setErrorMessage('');
     setIsFormOpen(true);
@@ -102,6 +135,7 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
       description: transaction.description,
       amount: String(transaction.amount),
       date: transaction.date,
+      categoryId: transaction.categoryId ?? '',
     });
   }
 
@@ -137,6 +171,7 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
         description: formValues.description,
         amount: Number(formValues.amount),
         date: formValues.date,
+        ...(formValues.categoryId ? { categoryId: formValues.categoryId } : {}),
       };
 
       if (formMode === 'edit') {
@@ -188,6 +223,7 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
     transactions: transactionState.transactions,
     totalSpending: transactionState.totalSpending,
     isLoading,
+    isLoadingCategories,
     errorMessage,
     isFormOpen,
     formMode,
@@ -199,5 +235,7 @@ export function MonthTransactionPanel({ monthId, monthLabel, onRecordsChanged })
     onSubmit: handleSubmit,
     onCancel: closeTransactionForm,
     onFieldChange: updateFormField,
+    activeCategories,
+    categoryById,
   });
 }

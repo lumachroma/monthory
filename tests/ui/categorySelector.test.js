@@ -39,3 +39,18 @@ test('category selector does not render archived categories when they are omitte
 
   assert.doesNotMatch(markup, /Archived/);
 });
+
+test('category selector shows the current archived category label when selected', () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(CategorySelector, {
+      label: 'Category',
+      categories: [{ id: 'cat_food', name: 'Food' }],
+      value: 'cat_archived',
+      selectedCategoryLabel: 'Travel (archived)',
+      onChange: () => {},
+      allowNone: true,
+    }),
+  );
+
+  assert.match(markup, /Travel \(archived\)/);
+});

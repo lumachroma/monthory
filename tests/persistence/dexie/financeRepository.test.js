@@ -139,6 +139,41 @@ test('saves, updates, and isolates transactions by month', async () => {
   });
 });
 
+test('persists category ids for income and transactions across updates and reloads', async () => {
+  await withRepository(async (repository) => {
+    const income = createIncome({
+      id: 'income-cat-1',
+      monthId: '2026-09',
+      date: '2026-09-05',
+      description: 'Salary',
+      amount: 10000,
+      categoryId: 'cat-income',
+    });
+    const transaction = createTransaction({
+      id: 'tx-cat-1',
+      monthId: '2026-09',
+      date: '2026-09-06',
+      description: 'Groceries',
+      amount: 180,
+      categoryId: 'cat-food',
+    });
+
+    await repository.incomes.save(income);
+    await repository.transactions.save(transaction);
+
+    assert.equal((await repository.incomes.getById('income-cat-1')).categoryId, 'cat-income');
+    assert.equal((await repository.transactions.getById('tx-cat-1')).categoryId, 'cat-food');
+
+    await repository.incomes.save({ ...income, categoryId: 'cat-bonus' });
+    const transactionWithoutCategory = { ...transaction };
+    delete transactionWithoutCategory.categoryId;
+    await repository.transactions.save(transactionWithoutCategory);
+
+    assert.equal((await repository.incomes.getById('income-cat-1')).categoryId, 'cat-bonus');
+    assert.equal(Object.prototype.hasOwnProperty.call(await repository.transactions.getById('tx-cat-1'), 'categoryId'), false);
+  });
+});
+
 test('persists transfers without affecting month isolation', async () => {
   await withRepository(async (repository) => {
     const transfer = createTransfer({

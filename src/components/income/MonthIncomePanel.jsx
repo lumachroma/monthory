@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useState } from 'react';
 
-import { monthIncomeApplication } from '../../application/index.js';
+import { categoryApplication, monthIncomeApplication } from '../../application/index.js';
 import { getTodayDateInputValue } from '../../lib/format.js';
 import { IncomePanelView } from './IncomePanelView.js';
 
@@ -9,6 +9,7 @@ function createEmptyFormValues(referenceDate = new Date()) {
     description: '',
     amount: '',
     date: getTodayDateInputValue(referenceDate),
+    categoryId: '',
   };
 }
 
@@ -36,7 +37,9 @@ function getFriendlyIncomeError(error) {
 
 export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
   const [incomeState, setIncomeState] = useState({ month: null, incomes: [], totalIncome: 0 });
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isMutating, setIsMutating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -45,6 +48,8 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
   const [formValues, setFormValues] = useState(createEmptyFormValues());
 
   const panelMonthLabel = useMemo(() => monthLabel, [monthLabel]);
+  const activeCategories = useMemo(() => categories.filter((category) => !category.archived), [categories]);
+  const categoryById = useMemo(() => Object.fromEntries(categories.map((category) => [category.id, category])), [categories]);
 
   useEffect(() => {
     let active = true;
@@ -85,6 +90,34 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
     };
   }, [monthId]);
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadCategories() {
+      setIsLoadingCategories(true);
+
+      try {
+        const loadedCategories = await categoryApplication.listCategories();
+
+        if (!active) {
+          return;
+        }
+
+        setCategories(loadedCategories);
+      } finally {
+        if (active) {
+          setIsLoadingCategories(false);
+        }
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   function openAddIncomeForm() {
     setErrorMessage('');
     setIsFormOpen(true);
@@ -102,6 +135,7 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
       description: income.description,
       amount: String(income.amount),
       date: income.date,
+      categoryId: income.categoryId ?? '',
     });
   }
 
@@ -137,6 +171,7 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
         description: formValues.description,
         amount: Number(formValues.amount),
         date: formValues.date,
+        ...(formValues.categoryId ? { categoryId: formValues.categoryId } : {}),
       };
 
       if (formMode === 'edit') {
@@ -189,6 +224,7 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
       incomes: incomeState.incomes,
       totalIncome: incomeState.totalIncome,
       isLoading,
+      isLoadingCategories,
       errorMessage,
       isFormOpen,
       formMode,
@@ -200,6 +236,8 @@ export function MonthIncomePanel({ monthId, monthLabel, onRecordsChanged }) {
       onSubmit: handleSubmit,
       onCancel: closeIncomeForm,
       onFieldChange: updateFormField,
+      activeCategories,
+      categoryById,
     })
   );
 }
