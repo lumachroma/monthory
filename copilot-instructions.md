@@ -20,12 +20,16 @@ Its purpose is to help users capture what happened, reflect on where their money
 Current implementation state:
 
 - application shell with Monthory identity exists
-- income and journal navigation exist
+- overview and journal navigation exist
 - month selector and empty states exist
 - monthly journal application layer exists
 - monthly income application layer exists
+- monthly transaction application layer exists
+- monthly overview application layer exists
 - current-month journal editor and save flow exist
 - current-month income list, editor, delete flow, and monthly total exist
+- current-month spending list, editor, delete flow, and monthly total exist
+- derived monthly financial overview exists
 - shell UI state lives in Zustand
 - domain v0.1 lives in `src/domain`
 - local persistence v0.1 lives in `src/persistence/dexie`

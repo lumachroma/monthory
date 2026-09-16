@@ -43,6 +43,9 @@ Monthory currently includes:
 - a monthly income use-case layer
 - an income list, editor, delete flow, and monthly total
 - local persistence for income by month
+- a monthly transaction use-case layer
+- a spending list, editor, delete flow, and monthly total
+- a derived monthly financial overview with income, spending, and difference
 - mobile-first empty states
 - calm design tokens for the shell
 - shell UI state in Zustand
@@ -51,7 +54,7 @@ Monthory currently includes:
 - repository contracts in `src/repositories`
 - domain, application, UI, and persistence tests in `tests/domain`, `tests/application`, `tests/ui`, and `tests/persistence`
 
-The app does not yet include transaction, transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
+The app does not yet include transfer, category, account, or template UI. It also does not include authentication, cloud sync, or Supabase.
 
 ## Technical direction
 

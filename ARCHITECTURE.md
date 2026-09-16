@@ -26,6 +26,7 @@ Current milestone state:
 - local persistence v0.1 lives in `src/persistence/dexie`
 - repository contracts live in `src/repositories`
 - monthly journal and monthly income application layers live in `src/application`
+- monthly transaction and monthly overview application layers live in `src/application`
 
 ## High-level architecture
 
@@ -92,7 +93,7 @@ The UI must not directly manipulate IndexedDB.
 Responsible for presentation, user interaction, accessibility, and responsive behaviour.
 
 ### Features
-Contains domain-specific workflows such as income, journal, transactions, accounts, categories, templates, and settings.
+Contains domain-specific workflows such as overview, income, spending, journal, transactions, accounts, categories, templates, and settings.
 
 ### Business logic
 Calculates derived values and coordinates domain operations. Business logic should be testable without rendering React.

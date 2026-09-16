@@ -121,6 +121,8 @@ Rules:
 
 Money going out.
 
+This is the first spending record surfaced in the app.
+
 Example:
 
 ```json
