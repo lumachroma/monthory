@@ -1,18 +1,82 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import { monthJournalApplication } from './application/index.js';
 import { useAppStore } from './store/useAppStore';
 import { renderEmptyStateSection } from './components/ui/EmptyStateSection';
+import { MonthJournalEditor } from './components/journal/MonthJournalEditor';
 
 export default function App() {
   const {
     activeView,
     goToNextMonth,
     goToPreviousMonth,
-    monthOptions,
-    selectedMonthKey,
+    selectedMonthId,
     setActiveView,
-    setSelectedMonthKey,
   } = useAppStore();
 
-  const selectedMonth = monthOptions.find((option) => option.key === selectedMonthKey) ?? monthOptions[2];
+  const [journalState, setJournalState] = useState({ month: null, journal: null });
+  const [notes, setNotes] = useState('');
+  const [isLoadingJournal, setIsLoadingJournal] = useState(true);
+  const [isSavingJournal, setIsSavingJournal] = useState(false);
+  const [journalError, setJournalError] = useState('');
+
+  const selectedMonthLabel = useMemo(
+    () => monthJournalApplication.formatMonthLabel(selectedMonthId),
+    [selectedMonthId],
+  );
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadJournal() {
+      setIsLoadingJournal(true);
+      setJournalError('');
+
+      try {
+        const loadedJournalState = await monthJournalApplication.loadMonthJournal(selectedMonthId);
+
+        if (!active) {
+          return;
+        }
+
+        setJournalState(loadedJournalState);
+        setNotes(loadedJournalState.journal?.notes ?? '');
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setJournalError('Something went wrong opening your journal. Please try again.');
+      } finally {
+        if (active) {
+          setIsLoadingJournal(false);
+        }
+      }
+    }
+
+    loadJournal();
+
+    return () => {
+      active = false;
+    };
+  }, [selectedMonthId]);
+
+  async function handleJournalSave(event) {
+    event.preventDefault();
+    setIsSavingJournal(true);
+    setJournalError('');
+
+    try {
+      const savedJournalState = await monthJournalApplication.saveMonthJournal(selectedMonthId, notes);
+
+      setJournalState(savedJournalState);
+      setNotes(savedJournalState.journal.notes);
+    } catch {
+      setJournalError('Something went wrong saving your journal. Please try again.');
+    } finally {
+      setIsSavingJournal(false);
+    }
+  }
 
   return (
     <main className="min-h-screen px-3 py-3 text-[color:var(--text-primary)] sm:px-6 sm:py-6">
@@ -60,50 +124,33 @@ export default function App() {
               </div>
             </div>
 
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--text-secondary)] sm:mt-4 sm:text-base">
-              A calm, private foundation for monthly financial reflection. The shell is in place;
-              the journal and dashboard will follow in later stages.
-            </p>
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-[1.5rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] p-3.5 sm:mt-5 sm:p-4">
+              <button
+                type="button"
+                onClick={goToPreviousMonth}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+                aria-label="Previous month"
+              >
+                &lt;
+              </button>
 
-            <div className="mt-4 flex flex-col gap-3 rounded-[1.5rem] border border-[color:var(--border-subtle)] bg-[color:var(--surface-soft)] p-3.5 sm:mt-5 sm:flex-row sm:items-center sm:justify-between sm:p-4">
-              <div>
+              <div className="min-w-0 flex-1 text-center">
                 <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-muted)] sm:text-xs sm:tracking-[0.28em]">
-                  Month selector
+                  Current month
                 </p>
                 <h2 className="mt-1 text-base font-semibold tracking-tight text-[color:var(--text-primary)] sm:text-lg">
-                  {selectedMonth.label}
+                  {selectedMonthLabel}
                 </h2>
               </div>
 
-              <div className="flex w-full items-center gap-2 self-start sm:w-auto sm:self-auto">
-                <button
-                  type="button"
-                  onClick={goToPreviousMonth}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
-                  aria-label="Previous month"
-                >
-                  &lt;
-                </button>
-                <select
-                  value={selectedMonthKey}
-                  onChange={(event) => setSelectedMonthKey(event.target.value)}
-                  className="min-w-0 flex-1 rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface)] px-4 py-2 text-sm font-medium text-[color:var(--text-primary)] outline-none sm:flex-none sm:min-w-52"
-                >
-                  {monthOptions.map((option) => (
-                    <option key={option.key} value={option.key}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={goToNextMonth}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
-                  aria-label="Next month"
-                >
-                  &gt;
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={goToNextMonth}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+                aria-label="Next month"
+              >
+                &gt;
+              </button>
             </div>
           </header>
 
@@ -112,7 +159,7 @@ export default function App() {
               renderEmptyStateSection({
                 eyebrow: 'Dashboard page',
                 title: 'No monthly insights yet',
-                description: `The dashboard will eventually summarize ${selectedMonth.label} with calm, glanceable context. For now it stays empty and non-judgmental.`,
+                description: `The dashboard will eventually summarize ${selectedMonthLabel} with calm, glanceable context. For now it stays empty and non-judgmental.`,
                 cards: [
                   {
                     title: 'Monthly snapshot',
@@ -132,25 +179,34 @@ export default function App() {
             ) : (
               renderEmptyStateSection({
                 eyebrow: 'Journal page',
-                title: 'No journal entries yet',
-                description: `The journal will eventually hold notes for ${selectedMonth.label}. For now it is only a quiet page shell.`,
+                title: journalState.journal ? 'Edit your journal' : 'Nothing here yet',
+                description: journalState.journal
+                  ? `Continue writing about ${selectedMonthLabel}.`
+                  : 'Start with a thought about your month.',
                 cards: [
                   {
                     title: 'Daily note area',
                     description: 'A small writing surface will appear here once monthly journaling begins.',
                   },
-                  {
-                    title: 'Recent entries',
-                    description: 'This panel will later list entries in a calm, scannable way.',
-                  },
-                  {
-                    title: 'Writing prompts',
-                    description: 'Gentle questions can support reflection without turning the app into a form.',
-                  },
                 ],
-                gridClassName: 'md:grid-cols-2 xl:grid-cols-3',
+                gridClassName: 'grid-cols-1',
               })
             )}
+
+            {activeView === 'journal' ? (
+              <div className="mt-5">
+                {MonthJournalEditor({
+                  monthLabel: selectedMonthLabel,
+                  notes,
+                  onNotesChange: setNotes,
+                  onSave: handleJournalSave,
+                  isLoading: isLoadingJournal,
+                  isSaving: isSavingJournal,
+                  errorMessage: journalError,
+                  hasJournal: Boolean(journalState.journal),
+                })}
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

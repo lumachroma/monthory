@@ -1,6 +1,7 @@
 export { createAccount } from './account.js';
 export { createCategory } from './category.js';
 export { createDomainId, createTimestamp } from './validation.js';
+export { parseMonthId } from './validation.js';
 export { createIncome } from './income.js';
 export { createJournal } from './journal.js';
 export { createMonth, createMonthId } from './month.js';
