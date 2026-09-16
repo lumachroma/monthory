@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "node --test tests/domain/*.test.js tests/application/*.test.js tests/persistence/dexie/*.test.js",
-    "test:watch": "node --test --watch tests/domain/*.test.js tests/application/*.test.js tests/persistence/dexie/*.test.js"
+    "test": "node --test tests/domain/*.test.js tests/application/*.test.js tests/ui/*.test.js tests/persistence/dexie/*.test.js",
+    "test:watch": "node --test --watch tests/domain/*.test.js tests/application/*.test.js tests/ui/*.test.js tests/persistence/dexie/*.test.js"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { createElement, useEffect, useMemo, useState } from 'react';
 
 import { monthJournalApplication } from './application/index.js';
 import { useAppStore } from './store/useAppStore';
 import { renderEmptyStateSection } from './components/ui/EmptyStateSection';
 import { MonthJournalEditor } from './components/journal/MonthJournalEditor';
+import { MonthIncomePanel } from './components/income/MonthIncomePanel.jsx';
 
 export default function App() {
   const {
@@ -108,7 +109,7 @@ export default function App() {
                       : 'text-[color:var(--text-secondary)]'
                   }`}
                 >
-                  Dashboard
+                  Income
                 </button>
                 <button
                   type="button"
@@ -156,26 +157,7 @@ export default function App() {
 
           <div className="flex-1 px-4 py-5 sm:px-8 sm:py-8">
             {activeView === 'dashboard' ? (
-              renderEmptyStateSection({
-                eyebrow: 'Dashboard page',
-                title: 'No monthly insights yet',
-                description: `The dashboard will eventually summarize ${selectedMonthLabel} with calm, glanceable context. For now it stays empty and non-judgmental.`,
-                cards: [
-                  {
-                    title: 'Monthly snapshot',
-                    description: 'A quiet summary of the month will appear here once journal data exists.',
-                  },
-                  {
-                    title: 'Trend view',
-                    description: 'This space will surface simple directional context instead of dense reporting.',
-                  },
-                  {
-                    title: 'Reflection cues',
-                    description: 'Short prompts and gentle reminders can live here without overwhelming the page.',
-                  },
-                ],
-                gridClassName: 'lg:grid-cols-3',
-              })
+              createElement(MonthIncomePanel, { monthId: selectedMonthId, monthLabel: selectedMonthLabel })
             ) : (
               renderEmptyStateSection({
                 eyebrow: 'Journal page',
